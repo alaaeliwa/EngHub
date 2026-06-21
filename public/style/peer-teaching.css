@@ -1,0 +1,298 @@
+/* Peer Teaching - Premium Soft UI Redesign */
+
+.peer-header-section {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 4rem 3rem;
+  background: linear-gradient(135deg, #066f6c 0%, #08918d 100%);
+  border-radius: var(--radius-xl);
+  color: white;
+  margin-bottom: 3rem;
+  position: relative;
+  overflow: hidden;
+  box-shadow: 0 20px 40px rgba(6, 111, 108, 0.15);
+}
+
+.peer-header-section::before {
+  content: '';
+  position: absolute;
+  top: -50%;
+  left: -20%;
+  width: 70%;
+  height: 200%;
+  background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 60%);
+  transform: rotate(-30deg);
+}
+
+.header-content {
+  position: relative;
+  z-index: 2;
+}
+
+.header-content h1 {
+  font-size: clamp(2rem, 5vw, 3rem);
+  margin-bottom: 0.75rem;
+  font-weight: 800;
+  letter-spacing: -1.5px;
+}
+
+.header-content p {
+  opacity: 0.9;
+  font-size: 1.15rem;
+  max-width: 500px;
+  line-height: 1.6;
+}
+
+.peer-header-section .btn-primary {
+  position: relative;
+  z-index: 2;
+  background-color: white;
+  color: var(--primary);
+  border: none;
+  font-weight: 800;
+  padding: 1.25rem 2.5rem;
+  box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+  transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+.peer-header-section .btn-primary:hover {
+  transform: translateY(-5px) scale(1.05);
+  background-color: #f8fafc;
+  box-shadow: 0 15px 35px rgba(0,0,0,0.15);
+}
+
+/* Controls - Glass Style */
+.peer-controls {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 2.5rem;
+  gap: 2rem;
+  background: white;
+  padding: 1rem;
+  border-radius: var(--radius-xl);
+  box-shadow: 0 4px 20px rgba(0,0,0,0.02);
+  border: 1px solid rgba(0,0,0,0.03);
+}
+
+.search-box {
+  position: relative;
+  flex: 1;
+}
+
+.search-box i {
+  position: absolute;
+  left: 1.5rem;
+  top: 50%;
+  transform: translateY(-50%);
+  color: var(--primary);
+  opacity: 0.5;
+}
+
+.search-box input {
+  width: 100%;
+  padding: 1rem 1rem 1rem 3.5rem;
+  border-radius: var(--radius-lg);
+  border: 1.5px solid #f1f5f9;
+  background-color: #f8fafc;
+  font-weight: 500;
+  transition: all 0.3s ease;
+}
+
+.search-box input:focus {
+  background-color: white;
+  border-color: var(--primary);
+  box-shadow: 0 8px 20px rgba(6, 111, 108, 0.05);
+  outline: none;
+}
+
+.filter-tabs {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.filter-btn {
+  padding: 0.75rem 1.5rem;
+  border-radius: var(--radius-lg);
+  border: none;
+  background-color: transparent;
+  font-weight: 700;
+  color: #64748b;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.filter-btn.active, .filter-btn:hover {
+  background-color: #f0f9f9;
+  color: var(--primary);
+}
+
+/* Courses Grid */
+.courses-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+  gap: 2.5rem;
+}
+
+.peer-course-card {
+  background: white;
+  border-radius: var(--radius-xl);
+  overflow: hidden;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.02);
+  border: 1px solid rgba(0,0,0,0.03);
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  display: flex;
+  flex-direction: column;
+}
+
+.peer-course-card:hover {
+  transform: translateY(-10px);
+  box-shadow: 0 25px 50px rgba(0,0,0,0.08);
+}
+
+.card-header {
+  height: 220px;
+  position: relative;
+  overflow: hidden;
+}
+
+.card-header img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.6s ease;
+}
+
+.peer-course-card:hover .card-header img {
+  transform: scale(1.1);
+}
+
+.price-tag {
+  position: absolute;
+  top: 20px;
+  right: 20px;
+  padding: 0.5rem 1.25rem;
+  border-radius: var(--radius-full);
+  font-weight: 800;
+  font-size: 0.8rem;
+  backdrop-filter: blur(10px);
+  z-index: 10;
+  box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+}
+
+.price-tag.free { background: rgba(220, 252, 231, 0.9); color: #16a34a; }
+.price-tag.paid { background: rgba(254, 226, 226, 0.9); color: #ef4444; }
+
+.card-body {
+  padding: 2rem;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+.card-body .cat {
+  font-size: 0.75rem;
+  font-weight: 800;
+  color: var(--primary);
+  text-transform: uppercase;
+  letter-spacing: 1.5px;
+  margin-bottom: 0.75rem;
+}
+
+.card-body h3 {
+  font-size: 1.4rem;
+  color: var(--primary-dark);
+  margin-bottom: 1.25rem;
+  font-weight: 800;
+  line-height: 1.4;
+}
+
+.instructor-info {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 1.5rem;
+}
+
+.instructor-info img {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  border: 2px solid #f1f5f9;
+}
+
+.instructor-info span {
+  font-weight: 700;
+  color: #475569;
+  font-size: 0.9rem;
+}
+
+.meta {
+  display: flex;
+  justify-content: space-between;
+  margin-top: auto;
+  padding-top: 1.5rem;
+  border-top: 1px solid #f1f5f9;
+  font-size: 0.85rem;
+  color: #94a3b8;
+  font-weight: 700;
+}
+
+.rating { display: flex; align-items: center; gap: 6px; }
+.rating i { color: #f59e0b; }
+
+.card-footer {
+  margin-top: 1.5rem;
+}
+
+.card-footer .btn {
+  width: 100%;
+  padding: 0.85rem;
+  font-weight: 800;
+}
+
+/* Modal - Dashboard Style */
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(15, 23, 42, 0.6);
+  backdrop-filter: blur(8px);
+  display: none;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+  padding: 2rem;
+}
+
+.modal-overlay.active { display: flex; }
+
+.modal-content {
+  background: white;
+  width: 100%;
+  max-width: 700px;
+  border-radius: var(--radius-2xl);
+  overflow: hidden;
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+}
+
+.modal-header {
+  padding: 2rem;
+  background-color: #fafbfc;
+  border-bottom: 1px solid #f1f5f9;
+  display: flex;
+  justify-content: space-between;
+}
+
+.modal-header h2 { font-size: 1.5rem; font-weight: 800; color: var(--primary-dark); }
+
+@media (max-width: 1024px) {
+  .peer-header-section { padding: 3rem 2rem; }
+  .peer-controls { flex-direction: column; align-items: stretch; }
+}
+
+@media (max-width: 768px) {
+  .peer-header-section { flex-direction: column; text-align: center; gap: 1.5rem; }
+  .peer-controls { flex-direction: column; align-items: stretch; }
+  .form-grid { grid-template-columns: 1fr; }
+}
