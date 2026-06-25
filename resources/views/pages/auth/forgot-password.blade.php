@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="en">
+<html lang="{{ App::getLocale() }}" dir="{{ App::getLocale() == 'ar' ? 'rtl' : 'ltr' }}">
 
 <head>
     <meta charset="UTF-8" />
@@ -13,10 +13,15 @@
     <link rel="stylesheet" href="{{ asset('style/login.css') }}" />
     <link rel="stylesheet" href="{{ asset('style/forgot-password.css') }}" />
 
-    <title>Reset Password | EngHub</title>
+    <title>{{ __('messages.auth_forgot_title') }} | EngHub</title>
 </head>
 
 <body>
+    <div style="position: absolute; top: 20px; {{ App::getLocale() == 'ar' ? 'left: 20px;' : 'right: 20px;' }} z-index: 10;">
+        <a href="{{ route('lang.switch', App::getLocale() == 'ar' ? 'en' : 'ar') }}" class="btn btn-outline" style="border:none; background: rgba(255,255,255,0.8); backdrop-filter: blur(5px);">
+            <i class="fa-solid fa-globe"></i> {{ App::getLocale() == 'ar' ? 'EN' : 'ع' }}
+        </a>
+    </div>
     <main class="forgot-password-page">
         <div class="forgot-container">
             <!-- Left Side: Media & Help -->
@@ -26,9 +31,8 @@
                         <img src="{{ asset('logo.png') }}" alt="EngHub logo" />
                     </a>
                     <div class="welcome-text">
-                        <h1>Forgot Your Password?</h1>
-                        <p>No worries! Enter your email address and we'll send you a link to reset your password and get
-                            you back on track.</p>
+                        <h1>{{ __('messages.auth_forgot_h1') }}</h1>
+                        <p>{{ __('messages.auth_forgot_h1_sub') }}</p>
                     </div>
                     <div class="illustration-container">
                         <img src="{{ asset('hero.png') }}" alt="Illustration" />
@@ -46,24 +50,41 @@
                         <a href="{{ route('home') }}" class="login-logo">
                             <img src="{{ asset('logo.png') }}" alt="EngHub logo" />
                         </a>
-                        <h2>Reset Password</h2>
-                        <p>Enter the email associated with your account</p>
+                        <h2>{{ __('messages.auth_forgot_h2') }}</h2>
+                        <p>{{ __('messages.auth_forgot_h2_sub') }}</p>
                     </div>
 
-                    <form class="forgot-form">
+                    @if (session('success'))
+                        <div class="alert alert-success" style="margin-bottom: 20px; padding: 15px; background-color: #d1fae5; color: #065f46; border-radius: 8px; font-size: 0.9rem;">
+                            {!! session('success') !!}
+                        </div>
+                    @endif
+
+                    @if ($errors->any())
+                        <div class="alert alert-danger" style="margin-bottom: 20px; padding: 15px; background-color: #fee2e2; color: #b91c1c; border-radius: 8px; font-size: 0.9rem;">
+                            <ul style="margin: 0; padding-left: 20px;">
+                                @foreach ($errors->all() as $error)
+                                    <li>{{ $error }}</li>
+                                @endforeach
+                            </ul>
+                        </div>
+                    @endif
+
+                    <form class="forgot-form" method="POST" action="{{ route('forgot-password.post') }}">
+                        @csrf
                         <div class="form-group">
-                            <label for="email">Email Address</label>
+                            <label for="email">{{ __('messages.auth_email') }}</label>
                             <div class="input-wrapper">
                                 <i class="fa-solid fa-envelope"></i>
-                                <input type="email" id="email" placeholder="name@example.com" required />
+                                <input type="email" id="email" name="email" placeholder="name@example.com" required />
                             </div>
                         </div>
 
-                        <button type="submit" class="btn btn-primary btn-block">Send Reset Link</button>
+                        <button type="submit" class="btn btn-primary btn-block">{{ __('messages.auth_send_link') }}</button>
                     </form>
 
                     <div class="form-footer">
-                        <p>Remember your password? <a href="{{ route('login') }}">Sign In</a></p>
+                        <p>{{ __('messages.auth_remember_pass') }} <a href="{{ route('login') }}">{{ __('messages.auth_sign_in') }}</a></p>
                     </div>
                 </div>
             </div>

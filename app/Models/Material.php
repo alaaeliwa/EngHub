@@ -22,4 +22,14 @@ class Material extends Model
     {
         return $this->belongsToMany(User::class, 'favorites', 'material_id', 'user_id')->withTimestamps();
     }
+
+    public function ratings()
+    {
+        return $this->hasMany(Rating::class);
+    }
+
+    public function userRating($userId)
+    {
+        return $this->ratings()->where('user_id', $userId)->first();
+    }
 }

@@ -3,57 +3,36 @@
 namespace App\Notifications;
 
 use Illuminate\Bus\Queueable;
-use Illuminate\Contracts\Queue\ShouldQueue;
-use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
+use Illuminate\Notifications\Messages\DatabaseMessage;
 
 class MaterialStatusNotification extends Notification
 {
     use Queueable;
 
-    protected $materialTitle;
+    protected $material;
     protected $status;
 
-    /**
-     * Create a new notification instance.
-     */
-    public function __construct($materialTitle, $status)
+    public function __construct($material, $status)
     {
-        $this->materialTitle = $materialTitle;
+        $this->material = $material;
         $this->status = $status;
     }
 
-    /**
-     * Get the notification's delivery channels.
-     *
-     * @return array<int, string>
-     */
-    public function via(object $notifiable): array
+    public function via($notifiable)
     {
         return ['database'];
     }
 
-    /**
-     * Get the array representation of the notification.
-     *
-     * @return array<string, mixed>
-     */
-    public function toArray(object $notifiable): array
+    public function toArray($notifiable)
     {
-        $message = "";
-        if ($this->status === 'approved') {
-            $message = "تمت الموافقة على الملف: {$this->materialTitle}";
-        } elseif ($this->status === 'rejected') {
-            $message = "تم رفض الملف: {$this->materialTitle}";
-        } elseif ($this->status === 'deleted') {
-            $message = "تم حذف الملف: {$this->materialTitle}";
-        }
-
+        $statusText = $this->status === 'approved' ? 'approved' : 'rejected';
         return [
-            'title' => 'تحديث حالة الملف',
-            'message' => $message,
-            'status' => $this->status,
-            'icon' => 'fa-file'
+            'title' => 'Material ' . ucfirst($statusText),
+            'message' => 'Your material "' . $this->material->title . '" has been ' . $statusText . '.',
+            'url' => route('course.details', ['id' => $this->material->course_id]),
+            'icon' => $this->status === 'approved' ? 'fa-check-circle' : 'fa-times-circle',
+            'color' => $this->status === 'approved' ? 'green' : 'red',
         ];
     }
 }

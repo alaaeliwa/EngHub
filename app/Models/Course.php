@@ -17,4 +17,9 @@ class Course extends Model
     {
         return $this->hasMany(Comment::class)->whereNull('parent_id')->with('user', 'replies', 'likedByUsers')->orderBy('created_at', 'desc');
     }
+
+    public function departments()
+    {
+        return $this->belongsToMany(Department::class);
+    }
 }

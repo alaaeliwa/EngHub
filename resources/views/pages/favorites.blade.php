@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="en">
+<html lang="{{ App::getLocale() }}" dir="{{ App::getLocale() == 'ar' ? 'rtl' : 'ltr' }}">
 
 <head>
     <meta charset="UTF-8" />
@@ -10,7 +10,7 @@
     <link rel="stylesheet" href="{{ asset('style/dashboard.css') }}" />
     <link rel="stylesheet" href="{{ asset('style/course-details.css') }}" />
 
-    <title>My Favorites | EngHub</title>
+    <title>{{ __('messages.fav_title') }} | EngHub</title>
 </head>
 
 <body>
@@ -25,11 +25,9 @@
                     style="background: white; border-radius: var(--radius-lg); padding: var(--space-xl); border: 1px solid rgba(0,0,0,0.03); box-shadow: var(--shadow-sm); margin-bottom: var(--space-xl);">
                     <div class="header-content">
                         <h1 style="font-size: 2rem; color: var(--primary-dark); margin-bottom: var(--space-xs);">
-                            <i class="fa-solid fa-heart" style="color: var(--primary); margin-right: 10px;"></i>My
-                            Favorites
+                            <i class="fa-solid fa-heart" style="color: var(--primary); margin-right: 10px;"></i>{{ __('messages.fav_title') }}
                         </h1>
-                        <p style="color: var(--text-muted); font-size: 1rem;">View all your liked resources and
-                            materials in one place.</p>
+                        <p style="color: var(--text-muted); font-size: 1rem;">{{ __('messages.fav_desc') }}</p>
                     </div>
                 </div>
 
@@ -37,10 +35,10 @@
                     <div class="tab-content" style="display: block;">
                         <div class="materials-table">
                             <div class="table-row header">
-                                <div>FILE NAME</div>
-                                <div>COURSE</div>
-                                <div>DATE</div>
-                                <div>ACTIONS</div>
+                                <div>{{ __('messages.cd_file_name') }}</div>
+                                <div>{{ __('messages.fav_course') }}</div>
+                                <div>{{ __('messages.cd_date') }}</div>
+                                <div>{{ __('messages.cd_actions') }}</div>
                             </div>
 
                             @forelse($favorites as $material)
@@ -61,7 +59,7 @@
                                         </div>
                                     </div>
                                     <div class="col-meta">
-                                        <span style="font-weight: 500; color: var(--primary-dark);">{{ $material->course ? $material->course->title : 'Unknown Course' }}</span>
+                                        <span style="font-weight: 500; color: var(--primary-dark);">{{ $material->course ? $material->course->title : __('messages.fav_unknown') }}</span>
                                     </div>
                                     <div class="col-date">{{ $material->created_at->format('M d, Y') }}</div>
                                     <div class="col-actions">
@@ -80,29 +78,19 @@
                             @empty
                                 <div style="padding: 2rem; text-align: center; color: var(--text-muted);">
                                     <i class="fa-regular fa-heart" style="font-size: 3rem; color: #cbd5e1; margin-bottom: 1rem;"></i>
-                                    <p>You haven't added any materials to your favorites yet.</p>
+                                    <p>{{ __('messages.fav_empty') }}</p>
                                 </div>
                             @endforelse
                         </div>
                     </div>
+                    
+                    {{ $favorites->links('vendor.pagination.custom') }}
                 </div>
 
             </div>
 
             <!-- Footer -->
-            <<footer
-                style="margin-top: auto; padding: var(--space-xl) var(--space-2xl); background: white; border-top: 1px solid rgba(0,0,0,0.05); display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: var(--space-md);">
-                <div style="font-size: 0.9rem; color: var(--text-muted); font-weight: 500;">
-                    &copy; 2026 <strong>EngHub</strong> Engineering Community. All rights reserved.
-                </div>
-                <div
-                    style="display: flex; gap: var(--space-lg); font-size: 0.9rem; font-weight: 600; color: var(--text-secondary);">
-                    <a href="#" style="transition: color 0.3s ease;">About</a>
-                    <a href="#" style="transition: color 0.3s ease;">Privacy Policy</a>
-                    <a href="#" style="transition: color 0.3s ease;">Terms of Service</a>
-                    <a href="#" style="transition: color 0.3s ease;">Contact Us</a>
-                </div>
-                </footer>
+            @include('components.footer')
         </main>
     </div>
 </body>

@@ -1,42 +1,34 @@
 <!doctype html>
-<html lang="en">
+<html lang="{{ App::getLocale() }}" dir="{{ App::getLocale() == 'ar' ? 'rtl' : 'ltr' }}">
 
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <!-- Favicon -->
+    <meta name="description" content="Browse engineering courses and study materials on EngHub." />
     <link rel="icon" href="/favicon.ico" />
-    <!-- fontawesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
-    <!-- style -->
     <link rel="stylesheet" href="{{ asset('style/global.css') }}" />
     <link rel="stylesheet" href="{{ asset('style/dashboard.css') }}" />
     <link rel="stylesheet" href="{{ asset('style/courses.css') }}" />
-
-    <title>Course Explorer | EngHub</title>
+    <title>Courses | EngHub</title>
 </head>
 
 <body>
     <div class="dashboard-layout">
-        <!-- Sidebar Navigation -->
         @include('components.sidbar')
-        <!-- Main Content Area -->
         <main class="main-content">
-            <!-- Top Nav -->
             @include('components.topNav')
 
-            <!-- Inner Content -->
             <div style="padding: var(--space-2xl);">
+
                 <!-- Page Header -->
                 <div class="page-header"
                     style="background: white; border-radius: var(--radius-lg); padding: var(--space-xl); border: 1px solid rgba(0,0,0,0.03); box-shadow: var(--shadow-sm); margin-bottom: var(--space-xl);">
                     <div class="header-content">
-                        <h1 style="font-size: 2rem; color: var(--primary-dark); margin-bottom: var(--space-xs);">Courses
-                            & Materials</h1>
-                        <p style="color: var(--text-muted); font-size: 1rem;">Browse engineering courses, summaries,
-                            PDFs, and learning resources.
-
-
+                        <h1 style="font-size: 2rem; color: var(--primary-dark); margin-bottom: var(--space-xs);">{{ __('messages.crs_title') }}</h1>
+                        <p style="color: var(--text-muted); font-size: 1rem;">
+                            {{ __('messages.crs_subtitle') }}
+                            <strong style="color:var(--primary);">{{ $courses->count() }}</strong> {{ __('messages.crs_found') }}
                         </p>
                     </div>
                 </div>
@@ -44,102 +36,147 @@
                 <!-- Filters -->
                 <div class="filter-section"
                     style="background: white; padding: var(--space-lg); border-radius: var(--radius-lg); border: 1px solid rgba(0,0,0,0.03); margin-bottom: var(--space-xl);">
-                    <div
-                        style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: var(--space-md);">
-                        <div style="display: flex; gap: var(--space-sm); flex-wrap: wrap;">
-                            <div
-                                style="display: flex; background: var(--bg-main); padding: 4px; border-radius: var(--radius-md); border: 1px solid var(--border-color);">
-                                <button class="btn btn-outline"
-                                    style="border: none; padding: 0.5rem 1rem; border-radius: var(--radius-sm); font-size: 0.85rem; background: transparent; color: var(--text-secondary);">All
-                                    Years</button>
-                                <button class="btn btn-primary"
-                                    style="border: none; padding: 0.5rem 1rem; border-radius: var(--radius-sm); font-size: 0.85rem; box-shadow: none;">Year
-                                    1</button>
-                                <button class="btn btn-outline"
-                                    style="border: none; padding: 0.5rem 1rem; border-radius: var(--radius-sm); font-size: 0.85rem; background: transparent; color: var(--text-secondary);">Year
-                                    2</button>
-                                <button class="btn btn-outline"
-                                    style="border: none; padding: 0.5rem 1rem; border-radius: var(--radius-sm); font-size: 0.85rem; background: transparent; color: var(--text-secondary);">Year
-                                    3</button>
-                                <button class="btn btn-outline"
-                                    style="border: none; padding: 0.5rem 1rem; border-radius: var(--radius-sm); font-size: 0.85rem; background: transparent; color: var(--text-secondary);">Year
-                                    4</button>
+                    <form method="GET" action="{{ route('courses') }}" id="filter-form">
+                        <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: var(--space-md);">
+
+                            <!-- Year filter -->
+                            <div style="display: flex; gap: var(--space-sm); flex-wrap: wrap; align-items: center;">
+                                <div style="display: flex; background: var(--bg-main); padding: 4px; border-radius: var(--radius-md); border: 1px solid var(--border-color);">
+                                    <a href="{{ route('courses', array_filter(['semester' => $semester])) }}"
+                                        class="btn {{ !$year ? 'btn-primary' : 'btn-outline' }}"
+                                        style="border: none; padding: 0.5rem 1rem; border-radius: var(--radius-sm); font-size: 0.85rem; {{ !$year ? 'box-shadow:none;' : 'background:transparent; color:var(--text-secondary);' }} text-decoration:none;">
+                                        {{ __('messages.crs_all_years') }}
+                                    </a>
+                                    @foreach($allYears as $yr)
+                                        <a href="{{ route('courses', array_filter(['year' => $yr, 'semester' => $semester])) }}"
+                                            class="btn {{ $year == $yr ? 'btn-primary' : 'btn-outline' }}"
+                                            style="border: none; padding: 0.5rem 1rem; border-radius: var(--radius-sm); font-size: 0.85rem; {{ $year == $yr ? 'box-shadow:none;' : 'background:transparent; color:var(--text-secondary);' }} text-decoration:none;">
+                                            {{ __('messages.crs_year') }} {{ $yr }}
+                                        </a>
+                                    @endforeach
+                                </div>
+
+                                <!-- Semester filter -->
+                                <div style="display: flex; background: var(--bg-main); padding: 4px; border-radius: var(--radius-md); border: 1px solid var(--border-color);">
+                                    <a href="{{ route('courses', array_filter(['year' => $year])) }}"
+                                        class="btn {{ !$semester ? 'btn-primary' : 'btn-outline' }}"
+                                        style="border: none; padding: 0.5rem 1rem; border-radius: var(--radius-sm); font-size: 0.85rem; {{ !$semester ? 'box-shadow:none;' : 'background:transparent; color:var(--text-secondary);' }} text-decoration:none;">
+                                        {{ __('messages.crs_all_semesters') }}
+                                    </a>
+                                    @foreach($allSemesters as $sem)
+                                        <a href="{{ route('courses', array_filter(['year' => $year, 'semester' => $sem])) }}"
+                                            class="btn {{ $semester == $sem ? 'btn-primary' : 'btn-outline' }}"
+                                            style="border: none; padding: 0.5rem 1rem; border-radius: var(--radius-sm); font-size: 0.85rem; {{ $semester == $sem ? 'box-shadow:none;' : 'background:transparent; color:var(--text-secondary);' }} text-decoration:none;">
+                                            {{ is_numeric($sem) ? __('messages.crs_semester').' '.$sem : ucfirst($sem) }}
+                                        </a>
+                                    @endforeach
+                                </div>
                             </div>
 
-                            <div
-                                style="display: flex; background: var(--bg-main); padding: 4px; border-radius: var(--radius-md); border: 1px solid var(--border-color);">
-                                <button class="btn btn-primary"
-                                    style="border: none; padding: 0.5rem 1rem; border-radius: var(--radius-sm); font-size: 0.85rem; box-shadow: none;">Semester
-                                    1</button>
-                                <button class="btn btn-outline"
-                                    style="border: none; padding: 0.5rem 1rem; border-radius: var(--radius-sm); font-size: 0.85rem; background: transparent; color: var(--text-secondary);">Semester
-                                    2</button>
+                            <!-- Search -->
+                            <div style="display:flex; gap: var(--space-sm); align-items:center;">
+                                @if($year || $semester)
+                                    <a href="{{ route('courses') }}" class="btn btn-outline" style="padding: 0.5rem 1rem; font-size:0.85rem; border-radius: var(--radius-md); text-decoration:none; color:#ef4444; border-color:#ef4444;">
+                                        <i class="fa-solid fa-xmark"></i> {{ __('messages.crs_clear_filters') }}
+                                    </a>
+                                @endif
                             </div>
                         </div>
-
-                        <div style="display: flex; gap: var(--space-sm);">
-                            <button class="btn btn-outline"
-                                style="padding: 0.5rem 1rem; font-size: 0.85rem; border-radius: var(--radius-md);">
-                                <i class="fa-solid fa-sliders"></i>
-                                <span>Advanced Filters</span>
-                            </button>
-                            <button class="btn btn-outline"
-                                style="padding: 0.5rem 1rem; font-size: 0.85rem; border-radius: var(--radius-md);">
-                                <i class="fa-solid fa-arrow-down-wide-short"></i>
-                                <span>Sort: Popular</span>
-                            </button>
-                        </div>
-                    </div>
+                    </form>
                 </div>
 
                 <!-- Course Grid -->
-                <div class="course-grid">
-                    <!-- Course 1 -->
-                    <div class="course-main-card">
-                        <div class="course-card-body">
-                            <div class="course-icon" style="color: #3b82f6; background-color: rgba(59, 130, 246, 0.1);">
-                                <i class="fa-solid fa-bolt"></i>
-                            </div>
-                            <div class="course-info">
-                                <span class="course-code" style="color: #3b82f6;">EE201</span>
-                                <h4>Circuits I</h4>
-                                <p>Fundamental principles of electrical circuits, Ohm's Law, Kirchhoff's Laws, and
-                                    network theorems.</p>
-                                <div
-                                    style="display: flex; align-items: center; justify-content: space-between; margin-top: var(--space-md);">
-                                    <div
-                                        style="display: flex; align-items: center; gap: 4px; font-size: 0.85rem; font-weight: 600;">
-                                        <i class="fa-solid fa-star" style="color: #f59e0b;"></i>
-                                        <span>4.8 <span style="color: var(--text-muted); font-weight: 400;">(124
-                                                ratings)</span></span>
+                @php
+                    $iconColors = [
+                        '#3b82f6','#10b981','#f59e0b','#ef4444','#8b5cf6','#14b8a6','#f97316','#06b6d4'
+                    ];
+                    $icons = [
+                        'fa-bolt','fa-book','fa-flask','fa-compass','fa-microchip','fa-gears',
+                        'fa-code','fa-calculator','fa-atom','fa-drafting-compass'
+                    ];
+                @endphp
+
+                @if($courses->isEmpty())
+                    <div style="text-align:center; background:white; border-radius: var(--radius-lg); padding: 4rem 2rem; box-shadow: var(--shadow-sm);">
+                        <i class="fa-solid fa-book-open" style="font-size:3rem; color:var(--border-color); display:block; margin-bottom:1rem;"></i>
+                        <h3 style="color:var(--text-secondary); margin-bottom:0.5rem;">{{ __('messages.crs_no_found') }}</h3>
+                        <p style="color:var(--text-muted);">{{ __('messages.crs_try_changing') }}</p>
+                        <a href="{{ route('courses') }}" class="btn btn-primary" style="margin-top:1rem; text-decoration:none;">{{ __('messages.crs_view_all') }}</a>
+                    </div>
+                @else
+                    <div class="course-grid">
+                        @foreach($courses as $i => $course)
+                            @php
+                                $color = $iconColors[$i % count($iconColors)];
+                                $icon  = $icons[$i % count($icons)];
+                                $bg    = $color . '1a';
+                            @endphp
+                            <a href="{{ route('course.details', ['id' => $course->id]) }}" class="course-main-card"
+                                style="text-decoration:none; color:inherit; display:block;">
+                                <div class="course-card-body">
+                                    <div class="course-icon" style="color: {{ $color }}; background-color: {{ $bg }};">
+                                        <i class="fa-solid {{ $icon }}"></i>
                                     </div>
-                                    <div style="display: flex; -webkit-box-align: center; align-items: center;">
-                                        <div style="display: flex; margin-right: -8px;">
-                                            <img src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?q=80&w=50&auto=format&fit=crop"
-                                                style="width: 24px; height: 24px; border-radius: 50%; border: 2px solid white; object-fit: cover;" />
-                                            <img src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?q=80&w=50&auto=format&fit=crop"
-                                                style="width: 24px; height: 24px; border-radius: 50%; border: 2px solid white; object-fit: cover; margin-left: -8px;" />
+                                    <div class="course-info">
+                                        <span class="course-code" style="color: {{ $color }};">{{ $course->code ?? 'N/A' }}</span>
+                                        <h4>{{ $course->title }}</h4>
+                                        <p>{{ Str::limit($course->description ?? __('messages.crs_no_desc'), 90) }}</p>
+
+                                        <div style="display: flex; align-items: center; justify-content: space-between; margin-top: var(--space-md);">
+                                            <div style="display: flex; align-items: center; gap: 6px; font-size: 0.82rem; color: var(--text-muted);">
+                                                <i class="fa-solid fa-user-tie" style="color:var(--primary);"></i>
+                                                <span>{{ $course->instructor ?? __('messages.crs_unknown_inst') }}</span>
+                                            </div>
+                                            <div style="display: flex; align-items: center; gap: 4px; font-size: 0.82rem;">
+                                                @if($course->year)
+                                                    <span style="background: var(--primary-light); color: var(--primary); padding: 2px 8px; border-radius: 10px; font-weight:600;">
+                                                        {{ __('messages.crs_y') }}{{ $course->year }}
+                                                        @if($course->semester) - {{ __('messages.crs_s') }}{{ $course->semester }} @endif
+                                                    </span>
+                                                @endif
+                                            </div>
                                         </div>
-                                        <span
-                                            style="font-size: 0.75rem; font-weight: 700; color: var(--primary); background: var(--primary-light); padding: 2px 6px; border-radius: 10px; margin-left: var(--space-xs);">+12</span>
                                     </div>
                                 </div>
-                            </div>
-                        </div>
-                        <div class="course-card-footer"
-                            style="display: flex; justify-content: space-between; align-items: center;">
-                            <span style="font-size: 0.8rem; color: var(--text-secondary); font-weight: 600;">85%
-                                Popularity</span>
-                            <span style="font-size: 0.8rem; color: var(--text-muted);"><i
-                                    class="fa-regular fa-folder-open"
-                                    style="margin-right: 4px; color: var(--primary);"></i> 32 Resources</span>
-                        </div>
+                                <div class="course-card-footer"
+                                    style="display: flex; justify-content: space-between; align-items: center;">
+                                    <div style="display: flex; align-items: center; gap: 12px;">
+                                        <span style="font-size: 0.8rem; color: var(--text-secondary); font-weight: 600;">
+                                            <i class="fa-solid fa-folder-open" style="color:var(--primary); margin-right:4px;"></i>
+                                            {{ $course->materials_count }} {{ __('messages.crs_res') }}
+                                        </span>
+                                        @php
+                                            $cardContributors = $course->materials->pluck('user')->filter()->unique('id')->take(3);
+                                            $totalContributors = $course->materials->pluck('user')->filter()->unique('id')->count();
+                                        @endphp
+                                        @if($totalContributors > 0)
+                                            <div style="display: flex; margin-left: 4px;">
+                                                @foreach($cardContributors as $contributor)
+                                                    <div style="width: 24px; height: 24px; border-radius: 50%; background: var(--primary-light); color: var(--primary); display: flex; align-items: center; justify-content: center; font-size: 0.6rem; font-weight: bold; border: 2px solid white; margin-left: -8px; z-index: {{ 10 - $loop->index }}; position: relative;" title="{{ $contributor->first_name }} {{ $contributor->last_name }}">
+                                                        {{ strtoupper(substr($contributor->first_name, 0, 1) . substr($contributor->last_name, 0, 1)) }}
+                                                    </div>
+                                                @endforeach
+                                                @if($totalContributors > 3)
+                                                    <div style="width: 24px; height: 24px; border-radius: 50%; background: #e2e8f0; color: #64748b; display: flex; align-items: center; justify-content: center; font-size: 0.6rem; font-weight: bold; border: 2px solid white; margin-left: -8px; z-index: 1; position: relative;">
+                                                        +{{ $totalContributors - 3 }}
+                                                    </div>
+                                                @endif
+                                            </div>
+                                        @endif
+                                    </div>
+                                    <span style="font-size:0.8rem; color:var(--text-muted); font-weight: 600;">
+                                        {{ __('messages.dash_explore') }} <i class="fa-solid fa-arrow-{{ App::getLocale() == 'ar' ? 'left' : 'right' }}" style="font-size:0.7rem; margin-left: 2px;"></i>
+                                    </span>
+                                </div>
+                            </a>
+                        @endforeach
                     </div>
+                    
+                    {{ $courses->links('vendor.pagination.custom') }}
+                @endif
 
-                </div>
             </div>
 
-            <!-- Footer -->
             @include('components.footer')
         </main>
     </div>

@@ -1,8 +1,11 @@
 <header class="top-nav">
     <div class="top-nav-left" style="position: relative;">
+        <button class="btn-icon mobile-only" id="mobileMenuBtn" style="display:none; margin-right: 15px;">
+            <i class="fa-solid fa-bars"></i>
+        </button>
         <div class="search-bar">
             <i class="fa-solid fa-magnifying-glass"></i>
-            <input type="text" id="global-search" placeholder="Search resources, workshops, or notes..." autocomplete="off" />
+            <input type="text" id="global-search" placeholder="{{ __('messages.nav_search_placeholder') ?? 'Search resources, workshops, or notes...' }}" autocomplete="off" />
         </div>
         <!-- Search Results Dropdown -->
         <div id="search-results-dropdown" style="display: none; position: absolute; top: 100%; left: 0; right: 0; background: white; border: 1px solid #e2e8f0; border-radius: 8px; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1); margin-top: 8px; z-index: 50; max-height: 400px; overflow-y: auto;">
@@ -10,6 +13,9 @@
         </div>
     </div>
     <div class="top-nav-right" style="display: flex; gap: 10px; align-items: center;">
+        <a href="{{ route('lang.switch', App::getLocale() == 'ar' ? 'en' : 'ar') }}" class="btn btn-outline" style="border:none; padding: 0.4rem 0.8rem;">
+            <i class="fa-solid fa-globe"></i> {{ App::getLocale() == 'ar' ? 'EN' : 'ع' }}
+        </a>
         <a href="{{ route('favorites') }}" class="btn notification-btn"
             style="border-radius: var(--radius-full); width: 42px; height: 42px; padding: 0; display: flex; align-items: center; justify-content: center; text-decoration: none; color: inherit;">
             <i class="fa-solid fa-heart" style="color: var(--primary);"></i>
@@ -23,21 +29,32 @@
                 @endif
             </button>
             
-            <div class="notification-dropdown" id="studentNotificationDropdown" style="display: none; position: absolute; top: 100%; right: 0; background: white; width: 300px; border: 1px solid #e2e8f0; border-radius: 8px; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1); margin-top: 8px; z-index: 50;">
-                <div class="dropdown-header" style="padding: 10px; border-bottom: 1px solid #e2e8f0;">
+            <div class="notification-dropdown" id="studentNotificationDropdown" style="display: none; position: absolute; top: 100%; right: 0; background: white; width: 350px; border: 1px solid #e2e8f0; border-radius: 8px; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1); margin-top: 8px; z-index: 50;">
+                <div class="dropdown-header" style="padding: 10px 15px; border-bottom: 1px solid #e2e8f0; display: flex; justify-content: space-between; align-items: center;">
                     <h4 style="margin: 0; font-size: 1rem;">Notifications</h4>
+                    @if(auth()->check() && auth()->user()->unreadNotifications->count() > 0)
+                        <button onclick="markAllAsRead()" style="background: none; border: none; color: var(--primary); font-size: 0.8rem; cursor: pointer; padding: 0;">Mark all as read</button>
+                    @endif
                 </div>
                 <div class="dropdown-body" style="max-height: 300px; overflow-y: auto;">
-                    @if(auth()->check() && auth()->user()->notifications->count() > 0)
+                    @if(auth()->check() && auth()->user()->unreadNotifications->count() > 0)
                         @foreach(auth()->user()->unreadNotifications as $notification)
-                            <div class="notification-item" style="padding: 10px; border-bottom: 1px solid #f1f5f9;">
-                                <div style="font-size: 0.9rem; font-weight: 500;">{{ $notification->data['title'] ?? 'Notification' }}</div>
-                                <div style="font-size: 0.8rem; color: #64748b;">{{ $notification->data['message'] ?? '' }}</div>
-                                <div style="font-size: 0.7rem; color: #94a3b8; margin-top: 5px;">{{ $notification->created_at->diffForHumans() }}</div>
-                            </div>
+                            <a href="{{ route('notifications.read', $notification->id) }}" class="notification-item" style="display: flex; gap: 10px; padding: 12px 15px; border-bottom: 1px solid #f1f5f9; text-decoration: none; color: inherit; transition: background 0.2s;">
+                                <div style="width: 32px; height: 32px; border-radius: 50%; background: {{ $notification->data['bg_color'] ?? 'rgba(99,102,241,0.1)' }}; color: {{ $notification->data['color'] ?? 'var(--primary)' }}; display: flex; align-items: center; justify-content: center; flex-shrink: 0;">
+                                    <i class="fa-solid {{ $notification->data['icon'] ?? 'fa-bell' }}"></i>
+                                </div>
+                                <div>
+                                    <div style="font-size: 0.9rem; font-weight: 500; color: #1e293b;">{{ $notification->data['title'] ?? 'Notification' }}</div>
+                                    <div style="font-size: 0.8rem; color: #64748b; margin-top: 2px;">{{ $notification->data['message'] ?? '' }}</div>
+                                    <div style="font-size: 0.7rem; color: #94a3b8; margin-top: 5px;">{{ $notification->created_at->diffForHumans() }}</div>
+                                </div>
+                            </a>
                         @endforeach
                     @else
-                        <div style="padding: 10px; text-align: center; color: #64748b; font-size: 0.9rem;">No notifications</div>
+                        <div style="padding: 20px; text-align: center; color: #64748b; font-size: 0.9rem;">
+                            <i class="fa-regular fa-bell" style="font-size: 2rem; color: #cbd5e1; margin-bottom: 10px; display: block;"></i>
+                            No unread notifications
+                        </div>
                     @endif
                 </div>
             </div>
@@ -119,6 +136,26 @@
                 e.stopPropagation();
             });
         }
+
+        // Mobile Sidebar Toggle
+        const mobileMenuBtn = document.getElementById('mobileMenuBtn');
+        const sidebar = document.querySelector('.sidebar');
+        
+        if (mobileMenuBtn && sidebar) {
+            mobileMenuBtn.addEventListener('click', function(e) {
+                e.stopPropagation();
+                sidebar.classList.toggle('active');
+            });
+            
+            // Close sidebar when clicking outside on mobile
+            document.addEventListener('click', function(e) {
+                if (window.innerWidth <= 1024) {
+                    if (!sidebar.contains(e.target) && !mobileMenuBtn.contains(e.target) && sidebar.classList.contains('active')) {
+                        sidebar.classList.remove('active');
+                    }
+                }
+            });
+        }
     });
 
     // Global Favorite Toggle Function
@@ -157,5 +194,24 @@
             }
         })
         .catch(error => console.error('Error toggling favorite:', error));
+    }
+
+    // Mark all notifications as read
+    function markAllAsRead() {
+        fetch('{{ route('notifications.read-all') }}', {
+            method: 'POST',
+            headers: {
+                'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                'Accept': 'application/json'
+            }
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                // Reload page to reflect changes
+                window.location.reload();
+            }
+        })
+        .catch(error => console.error('Error marking notifications as read:', error));
     }
 </script>

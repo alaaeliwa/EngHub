@@ -124,13 +124,13 @@ function renderOverview() {
     if (chart && typeof activityData !== "undefined") {
         // Reverse it so oldest is left, newest is right
         const data = [...activityData].reverse();
-        const max = Math.max(...data.map((d) => d.count), 1); // Avoid division by 0
+        const maxVal = Math.max(...data.map((d) => d.count), 5); // Minimum max is 5 for better scaling
         chart.innerHTML = data
             .map(
                 (d, i) => `
       <div class="chart-bar-wrap" style="transition-delay: ${i * 0.1}s">
         <span class="chart-value">${d.count}</span>
-        <div class="chart-bar" style="height:${(d.count / max) * 180}px; background: linear-gradient(180deg, var(--primary) 0%, var(--primary-dark) 100%); border-radius: 8px 8px 4px 4px;"></div>
+        <div class="chart-bar" style="height:${(d.count / maxVal) * 180}px; background: linear-gradient(180deg, var(--primary) 0%, var(--primary-dark) 100%); border-radius: 8px 8px 4px 4px; min-height: ${d.count > 0 ? '10px' : '0'};"></div>
         <span class="chart-label">${d.day}</span>
       </div>
     `,
@@ -138,16 +138,17 @@ function renderOverview() {
             .join("");
     }
 
-    // Department Chart (Static for now until Departments have actual students)
+    // Department Chart (Dynamic scaling)
     const dChart = document.getElementById("deptChart");
-    const deptColors = ["#0284c7", "#16a34a", "#f1822d", "#db2777"];
+    const deptColors = ["#0284c7", "#16a34a", "#f1822d", "#db2777", "#8b5cf6", "#14b8a6"];
     if (dChart && typeof departmentsData !== "undefined") {
+        const maxDept = Math.max(...departmentsData.map(d => d.students), 10); // Minimum max of 10
         dChart.innerHTML = departmentsData
             .map(
                 (d, i) => `
       <div class="chart-bar-wrap" style="transition-delay: ${i * 0.15}s">
         <span class="chart-value">${d.students}</span>
-        <div class="chart-bar" style="height:${(d.students / 420) * 180}px; background: ${deptColors[i % deptColors.length]}; border-radius: 8px 8px 4px 4px;"></div>
+        <div class="chart-bar" style="height:${(d.students / maxDept) * 180}px; background: ${deptColors[i % deptColors.length]}; border-radius: 8px 8px 4px 4px; min-height: ${d.students > 0 ? '10px' : '0'};"></div>
         <span class="chart-label">${d.name.split(" ")[0]}</span>
       </div>
     `,
@@ -201,6 +202,7 @@ function renderCourses(filter = {}) {
       <td>${c.instructor || "—"}</td>
       <td><span class="badge" style="background:#eff6ff;color:#1d4ed8;border:1px solid #bfdbfe;">Year ${c.year}</span></td>
       <td><span class="badge" style="background:#f0fdf4;color:#15803d;border:1px solid #bbf7d0;">Sem ${c.semester}</span></td>
+      <td>${c.departments && c.departments.length ? c.departments.map(d => `<span class="badge" style="background:#f8fafc;color:#475569;border:1px solid #cbd5e1;margin-right:4px;">${d.name}</span>`).join('') : '—'}</td>
       <td><span class="badge badge-${c.status}">${capitalize(c.status)}</span></td>
       <td>
         <div class="action-btns">
@@ -853,26 +855,81 @@ function saveDepartment() {
 
     if (!nameInput.value.trim()) return;
 
-    const newId = departmentsData.length
-        ? Math.max(...departmentsData.map((d) => d.id)) + 1
-        : 1;
-    const newDept = {
-        id: newId,
-        name: nameInput.value.trim(),
-        students: 0,
-        courses: 0,
-        years: yearsInput.value,
-        subjects: 0,
-    };
+    const csrfToken = document.querySelector('meta[name="csrf-token"]')?.content;
+    const btn = document.querySelector('#addDeptModal button[type="submit"]');
 
-    departmentsData.push(newDept);
-    renderDepartments();
-    closeModal("addDeptModal");
-    showToast(`Department "${newDept.name}" added successfully`);
+    fetch('/admin/departments', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'Accept': 'application/json', 'X-CSRF-TOKEN': csrfToken },
+        body: JSON.stringify({ name: nameInput.value.trim(), years: yearsInput.value })
+    })
+    .then(r => r.json())
+    .then(data => {
+        if (data.success) {
+            const newDept = data.department;
+            showToast(`Department "${newDept.name}" added successfully`, 'success');
+            setTimeout(() => window.location.reload(), 1000); 
+        } else {
+            showToast('Failed to add department', 'error');
+        }
+    }).catch(err => {
+        showToast('Network error', 'error');
+    });
+}
 
-    // Clear inputs
-    nameInput.value = "";
-    yearsInput.value = "4";
+function editDepartment(id, name, years) {
+    document.getElementById("editDeptId").value = id;
+    document.getElementById("editDeptName").value = name;
+    document.getElementById("editDeptYears").value = years;
+    openModal("editDeptModal");
+}
+
+function submitEditDepartment() {
+    const id = document.getElementById("editDeptId").value;
+    const name = document.getElementById("editDeptName").value;
+    const years = document.getElementById("editDeptYears").value;
+
+    if (!name.trim()) return;
+
+    const csrfToken = document.querySelector('meta[name="csrf-token"]')?.content;
+
+    fetch(`/admin/departments/${id}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json', 'Accept': 'application/json', 'X-CSRF-TOKEN': csrfToken },
+        body: JSON.stringify({ name: name.trim(), years: years })
+    })
+    .then(r => r.json())
+    .then(data => {
+        if (data.success) {
+            showToast('Department updated successfully', 'success');
+            setTimeout(() => window.location.reload(), 1000);
+        } else {
+            showToast('Failed to update department', 'error');
+        }
+    }).catch(err => {
+        showToast('Network error', 'error');
+    });
+}
+
+function deleteDepartment(id) {
+    if (!confirm('Are you sure you want to delete this department?')) return;
+    const csrfToken = document.querySelector('meta[name="csrf-token"]')?.content;
+
+    fetch(`/admin/departments/${id}`, {
+        method: 'DELETE',
+        headers: { 'Accept': 'application/json', 'X-CSRF-TOKEN': csrfToken }
+    })
+    .then(r => r.json())
+    .then(data => {
+        if (data.success) {
+            showToast('Department deleted successfully', 'success');
+            setTimeout(() => window.location.reload(), 1000);
+        } else {
+            showToast('Failed to delete department', 'error');
+        }
+    }).catch(err => {
+        showToast('Network error', 'error');
+    });
 }
 
 // ═══ Utility ═══
@@ -892,3 +949,6 @@ window.deleteCommentDB = deleteCommentDB;
 window.showToast = showToast;
 window.saveDepartment = saveDepartment;
 window.saveWorkshop = saveWorkshop;
+window.editDepartment = editDepartment;
+window.submitEditDepartment = submitEditDepartment;
+window.deleteDepartment = deleteDepartment;

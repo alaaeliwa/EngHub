@@ -24,11 +24,13 @@ class User extends Authenticatable
         'role',
         'major',
         'academic_year',
+        'current_semester',
         'skills',
         'avatar',
         'cover_photo',
         'email',
         'password',
+        'department_id',
     ];
 
     /**
@@ -60,6 +62,11 @@ class User extends Authenticatable
         return $this->belongsToMany(Material::class, 'favorites', 'user_id', 'material_id')->withTimestamps();
     }
 
+    public function materials()
+    {
+        return $this->hasMany(Material::class, 'user_id');
+    }
+
     /**
      * Get the user's full name via $user->name
      */
@@ -71,5 +78,10 @@ class User extends Authenticatable
     public function isAdmin(): bool
     {
         return $this->role === 'admin';
+    }
+
+    public function department()
+    {
+        return $this->belongsTo(Department::class);
     }
 }

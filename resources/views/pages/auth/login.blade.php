@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="en">
+<html lang="{{ App::getLocale() }}" dir="{{ App::getLocale() == 'ar' ? 'rtl' : 'ltr' }}">
 
 <head>
     <meta charset="UTF-8" />
@@ -12,10 +12,15 @@
     <link rel="stylesheet" href="{{ asset('style/global.css') }}" />
     <link rel="stylesheet" href="{{ asset('style/login.css') }}" />
 
-    <title>Login | EngHub</title>
+    <title>{{ __('messages.auth_login_title') }} | EngHub</title>
 </head>
 
 <body>
+    <div style="position: absolute; top: 20px; {{ App::getLocale() == 'ar' ? 'left: 20px;' : 'right: 20px;' }} z-index: 10;">
+        <a href="{{ route('lang.switch', App::getLocale() == 'ar' ? 'en' : 'ar') }}" class="btn btn-outline" style="border:none; background: rgba(255,255,255,0.8); backdrop-filter: blur(5px);">
+            <i class="fa-solid fa-globe"></i> {{ App::getLocale() == 'ar' ? 'EN' : 'ع' }}
+        </a>
+    </div>
     <main class="login-page">
         <div class="login-container">
             <!-- Left Side: Media & Welcome -->
@@ -25,9 +30,8 @@
                         <img src="{{ asset('logo.png') }}" alt="EngHub logo" />
                     </a>
                     <div class="welcome-text">
-                        <h1>Welcome Back!</h1>
-                        <p>Sign in to continue your learning journey, access your courses, and connect with fellow
-                            engineers.</p>
+                        <h1>{{ __('messages.auth_welcome_back') }}</h1>
+                        <p>{{ __('messages.auth_welcome_back_sub') }}</p>
                     </div>
                     <div class="illustration-container">
                         <img src="{{ asset('hero.png') }}" alt="Illustration" />
@@ -45,8 +49,8 @@
                         <a href="{{ route('home') }}" class="login-logo">
                             <img src="{{ asset('logo.png') }}" alt="EngHub logo" />
                         </a>
-                        <h2>Sign In</h2>
-                        <p>Enter your details to access your account</p>
+                        <h2>{{ __('messages.auth_sign_in') }}</h2>
+                        <p>{{ __('messages.auth_sign_in_sub') }}</p>
                     </div>
 
                     <form class="login-form" method="POST" action="{{ route('login.post') }}">
@@ -61,7 +65,7 @@
                             </div>
                         @endif
                         <div class="form-group">
-                            <label for="email">Email Address</label>
+                            <label for="email">{{ __('messages.auth_email') }}</label>
                             <div class="input-wrapper">
                                 <i class="fa-solid fa-envelope"></i>
                                 <input type="email" id="email" name="email" value="{{ old('email') }}" placeholder="name@example.com" required />
@@ -69,7 +73,7 @@
                         </div>
 
                         <div class="form-group">
-                            <label for="password">Password</label>
+                            <label for="password">{{ __('messages.auth_password') }}</label>
                             <div class="input-wrapper">
                                 <i class="fa-solid fa-lock"></i>
                                 <input type="password" id="password" name="password" placeholder="••••••••" required />
@@ -79,16 +83,16 @@
                         <div class="form-options">
                             <label class="remember-me">
                                 <input type="checkbox" />
-                                <span>Remember me</span>
+                                <span>{{ __('messages.auth_remember') }}</span>
                             </label>
-                            <a href="{{ route('forgot-password') }}" class="forgot-password">Forgot password?</a>
+                            <a href="{{ route('forgot-password') }}" class="forgot-password">{{ __('messages.auth_forgot') }}</a>
                         </div>
 
-                        <button type="submit" class="btn btn-primary btn-block">Sign In</button>
+                        <button type="submit" class="btn btn-primary btn-block">{{ __('messages.auth_sign_in') }}</button>
                     </form>
 
                     <div class="form-footer">
-                        <p>Don't have an account? <a href="{{ route('register') }}">Sign Up</a></p>
+                        <p>{{ __('messages.auth_no_account') }} <a href="{{ route('register') }}">{{ __('messages.auth_sign_up') }}</a></p>
                     </div>
                 </div>
             </div>

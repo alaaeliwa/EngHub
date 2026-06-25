@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="en">
+<html lang="{{ App::getLocale() }}" dir="{{ App::getLocale() == 'ar' ? 'rtl' : 'ltr' }}">
 
 <head>
     <meta charset="UTF-8" />
@@ -9,7 +9,7 @@
     <link rel="stylesheet" href="{{ asset('style/global.css') }}" />
     <link rel="stylesheet" href="{{ asset('style/dashboard.css') }}" />
 
-    <title>Upload Success | EngHub</title>
+    <title>{{ __('messages.ups_title') }} | EngHub</title>
 </head>
 
 <body style="background-color: #f8fafc;">
@@ -24,9 +24,9 @@
             </div>
 
             <!-- Header Text -->
-            <h1 style="color: var(--primary-dark); font-size: 2rem; font-weight: 800; margin-bottom: 0.5rem;">Material Uploaded Successfully!</h1>
+            <h1 style="color: var(--primary-dark); font-size: 2rem; font-weight: 800; margin-bottom: 0.5rem;">{{ __('messages.ups_success') }}</h1>
             <p style="color: #64748b; font-size: 1rem; line-height: 1.6; max-width: 450px; margin-bottom: 2rem;">
-                Your contribution is being reviewed by our moderators. It will be visible to the community shortly.
+                {{ __('messages.ups_msg') }}
             </p>
 
             <!-- Resource Summary Card -->
@@ -37,20 +37,20 @@
                 <div style="padding: 1.5rem 2rem;">
                     <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 1.5rem;">
                         <i class="fa-solid fa-circle-info" style="color: var(--primary); font-size: 0.8rem;"></i>
-                        <span style="font-weight: 700; color: var(--primary); font-size: 0.85rem; letter-spacing: 0.5px; text-transform: uppercase;">Resource Summary</span>
+                        <span style="font-weight: 700; color: var(--primary); font-size: 0.85rem; letter-spacing: 0.5px; text-transform: uppercase;">{{ __('messages.ups_res_summary') }}</span>
                     </div>
 
                     <div style="display: grid; grid-template-columns: 2fr 2fr 1fr; gap: 1rem;">
                         <div>
-                            <div style="font-size: 0.75rem; color: #94a3b8; font-weight: 700; text-transform: uppercase; margin-bottom: 5px; letter-spacing: 0.5px;">Title</div>
+                            <div style="font-size: 0.75rem; color: #94a3b8; font-weight: 700; text-transform: uppercase; margin-bottom: 5px; letter-spacing: 0.5px;">{{ __('messages.up_lbl_title') }}</div>
                             <div style="font-weight: 600; color: var(--primary-dark); font-size: 1rem; line-height: 1.4;">Thermodynamics Lab<br>Report 04</div>
                         </div>
                         <div>
-                            <div style="font-size: 0.75rem; color: #94a3b8; font-weight: 700; text-transform: uppercase; margin-bottom: 5px; letter-spacing: 0.5px;">Course</div>
+                            <div style="font-size: 0.75rem; color: #94a3b8; font-weight: 700; text-transform: uppercase; margin-bottom: 5px; letter-spacing: 0.5px;">{{ __('messages.ups_course') }}</div>
                             <div style="font-weight: 600; color: var(--primary-dark); font-size: 1rem; line-height: 1.4;">MECH 204: Applied<br>Heat</div>
                         </div>
                         <div>
-                            <div style="font-size: 0.75rem; color: #94a3b8; font-weight: 700; text-transform: uppercase; margin-bottom: 5px; letter-spacing: 0.5px;">File Type</div>
+                            <div style="font-size: 0.75rem; color: #94a3b8; font-weight: 700; text-transform: uppercase; margin-bottom: 5px; letter-spacing: 0.5px;">{{ __('messages.up_lbl_type') }}</div>
                             <div style="display: flex; align-items: center; gap: 5px; color: #ef4444; font-weight: 600; background: #fef2f2; padding: 4px 8px; border-radius: 4px; display: inline-flex;">
                                 <i class="fa-regular fa-file-pdf"></i> PDF
                             </div>
@@ -61,8 +61,8 @@
 
             <!-- Actions -->
             <div style="display: flex; gap: 1rem; width: 100%; max-width: 500px;">
-                <a href="{{ route('dashboard') }}" class="btn" style="flex: 1; text-align: center; text-decoration: none; padding: 1rem; border-radius: var(--radius-sm); font-weight: 600;">Go to Dashboard <i class="fa-solid fa-arrow-right" style="margin-left: 5px;"></i></a>
-                <a href="{{ route('upload') }}" style="flex: 1; text-align: center; text-decoration: none; padding: 1rem; border: 1px solid #cbd5e1; border-radius: var(--radius-sm); color: #64748b; font-weight: 600; background-color: white; transition: all 0.3s ease;">+ Upload Another Resource</a>
+                <a href="{{ route('dashboard') }}" class="btn" style="flex: 1; text-align: center; text-decoration: none; padding: 1rem; border-radius: var(--radius-sm); font-weight: 600;">{{ __('messages.ups_go_dash') }} <i class="fa-solid fa-arrow-{{ App::getLocale() == 'ar' ? 'left' : 'right' }}" style="margin-left: 5px;"></i></a>
+                <a href="{{ route('upload') }}" style="flex: 1; text-align: center; text-decoration: none; padding: 1rem; border: 1px solid #cbd5e1; border-radius: var(--radius-sm); color: #64748b; font-weight: 600; background-color: white; transition: all 0.3s ease;">{{ __('messages.ups_upload_another') }}</a>
             </div>
 
         </div>

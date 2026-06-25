@@ -92,6 +92,11 @@ document.addEventListener("DOMContentLoaded", () => {
                 formData.append('useful_links', usefulLinks);
             }
 
+            const selectedDepts = Array.from(document.querySelectorAll('.ws_department_checkbox:checked')).map(cb => cb.value);
+            selectedDepts.forEach((deptId, index) => {
+                formData.append(`departments[${index}]`, deptId);
+            });
+
             // Optional fields (for UI purposes)
             const submitBtn = form.querySelector('button[type="submit"]');
             const originalText = submitBtn.innerHTML;

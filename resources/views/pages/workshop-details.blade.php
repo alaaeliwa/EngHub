@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="en">
+<html lang="{{ App::getLocale() }}" dir="{{ App::getLocale() == 'ar' ? 'rtl' : 'ltr' }}">
 
 <head>
     <meta charset="UTF-8" />
@@ -59,23 +59,27 @@
                             </div>
                         </div>
                         <div class="action-area">
-                            @if($workshop->isFull())
-                                <button class="btn btn-primary btn-lg register-btn" disabled style="opacity:0.6;cursor:not-allowed;">
-                                    <i class="fa-solid fa-lock"></i> Workshop Full
+                            @if(auth()->check() && auth()->id() == $workshop->user_id)
+                                <button class="btn btn-outline btn-lg register-btn" disabled style="opacity:0.8;cursor:not-allowed;background:rgba(255,255,255,0.1);border-color:white;color:white;">
+                                    <i class="fa-solid fa-crown"></i> Your Workshop
                                 </button>
-                                <span style="font-size:0.85rem;color:#ef4444;margin-top:6px;display:block;"><i class="fa-solid fa-circle-exclamation"></i> No seats available</span>
+                            @elseif($workshop->isFull())
+                                <button class="btn btn-primary btn-lg register-btn" disabled style="opacity:0.6;cursor:not-allowed;">
+                                    <i class="fa-solid fa-lock"></i> {{ __('messages.wsd_full') }}
+                                </button>
+                                <span style="font-size:0.85rem;color:#ef4444;margin-top:6px;display:block;"><i class="fa-solid fa-circle-exclamation"></i> {{ __('messages.wsd_no_seats') }}</span>
                             @elseif($isRegistered)
                                 <button class="btn btn-primary btn-lg register-btn" disabled style="background:#059669;opacity:0.9;">
-                                    <i class="fa-solid fa-check"></i> Already Registered ✅
+                                    <i class="fa-solid fa-check"></i> {{ __('messages.wsd_already_reg') }} ✅
                                 </button>
                             @else
                                 <button class="btn btn-primary btn-lg register-btn" id="registerBtn"
                                     onclick="registerWorkshop({{ $workshop->id }})">
-                                    <i class="fa-solid fa-user-plus"></i> Register Now
+                                    <i class="fa-solid fa-user-plus"></i> {{ __('messages.wsd_reg_now') }}
                                 </button>
                                 <span style="font-size:0.85rem;color:#64748b;margin-top:6px;display:block;">
                                     <i class="fa-solid fa-users"></i>
-                                    {{ $workshop->capacity - $workshop->registered }} seats left out of {{ $workshop->capacity }}
+                                    {{ $workshop->capacity - $workshop->registered }} {{ __('messages.wsd_seats_left_out_of') }} {{ $workshop->capacity }}
                                 </span>
                             @endif
                         </div>
@@ -91,21 +95,21 @@
                             <div class="info-mini-card">
                                 <i class="fa-solid fa-calendar-day"></i>
                                 <div class="txt">
-                                    <span class="label">Date</span>
+                                    <span class="label">{{ __('messages.wsd_date') }}</span>
                                     <span class="val">{{ $workshop->date }}</span>
                                 </div>
                             </div>
                             <div class="info-mini-card">
                                 <i class="fa-solid fa-location-dot"></i>
                                 <div class="txt">
-                                    <span class="label">Location</span>
+                                    <span class="label">{{ __('messages.ws_location') }}</span>
                                     <span class="val">{{ $workshop->location }}</span>
                                 </div>
                             </div>
                             <div class="info-mini-card">
                                 <i class="fa-solid fa-users"></i>
                                 <div class="txt">
-                                    <span class="label">Registered</span>
+                                    <span class="label">{{ __('messages.ws_registered') }}</span>
                                     <span class="val">{{ $workshop->registered }}</span>
                                 </div>
                             </div>
@@ -113,7 +117,7 @@
                             <div class="info-mini-card">
                                 <i class="fa-solid fa-clock"></i>
                                 <div class="txt">
-                                    <span class="label">Time</span>
+                                    <span class="label">{{ __('messages.wsd_time') }}</span>
                                     <span class="val">{{ \Carbon\Carbon::parse($workshop->time)->format('h:i A') }}</span>
                                 </div>
                             </div>
@@ -122,8 +126,8 @@
                             <div class="info-mini-card">
                                 <i class="fa-solid fa-hourglass-half"></i>
                                 <div class="txt">
-                                    <span class="label">Duration</span>
-                                    <span class="val">{{ $workshop->duration }} Hours</span>
+                                    <span class="label">{{ __('messages.wsd_duration') }}</span>
+                                    <span class="val">{{ $workshop->duration }} {{ __('messages.wsd_hours') }}</span>
                                 </div>
                             </div>
                             @endif
@@ -131,7 +135,7 @@
                             <div class="info-mini-card">
                                 <i class="fa-solid fa-globe"></i>
                                 <div class="txt">
-                                    <span class="label">Type</span>
+                                    <span class="label">{{ __('messages.wsd_type') }}</span>
                                     <span class="val">{{ ucfirst($workshop->type) }}</span>
                                 </div>
                             </div>
@@ -140,7 +144,7 @@
                             <div class="info-mini-card">
                                 <i class="fa-solid fa-user-tie"></i>
                                 <div class="txt">
-                                    <span class="label">Instructor</span>
+                                    <span class="label">{{ __('messages.wsd_instructor') }}</span>
                                     <span class="val">{{ $workshop->instructor_name }}</span>
                                 </div>
                             </div>
@@ -149,13 +153,13 @@
 
                         <!-- Description -->
                         <section class="details-block animate-in">
-                            <h3>Workshop Description</h3>
-                            <p>{{ $workshop->description ?: 'No description provided for this workshop.' }}</p>
+                            <h3>{{ __('messages.wsd_desc') }}</h3>
+                            <p>{{ $workshop->description ?: __('messages.wsd_no_desc') }}</p>
                         </section>
 
                         <!-- Topics Covered -->
                         <section class="details-block animate-in">
-                            <h3>What you will learn</h3>
+                            <h3>{{ __('messages.wsd_learn') }}</h3>
                             <div class="topics-grid">
                                 <div class="topic-item"><i class="fa-solid fa-circle-check"></i> React Basics & JSX
                                 </div>
@@ -174,7 +178,7 @@
                         <!-- Resources -->
                         @if($workshop->pdf_slides || $workshop->useful_links)
                         <section class="details-block animate-in">
-                            <h3><i class="fa-solid fa-folder-open" style="margin-right:8px;color:var(--primary)"></i>Additional Resources</h3>
+                            <h3><i class="fa-solid fa-folder-open" style="margin-right:8px;color:var(--primary)"></i>{{ __('messages.wsd_resources') }}</h3>
                             <div style="display:flex;flex-direction:column;gap:12px;margin-top:12px;">
                                 @if($workshop->pdf_slides)
                                 <a href="{{ asset('storage/' . $workshop->pdf_slides) }}" target="_blank"
@@ -182,8 +186,8 @@
                                    onmouseover="this.style.background='rgba(6,111,108,0.14)'" onmouseout="this.style.background='rgba(6,111,108,0.07)'">
                                     <i class="fa-solid fa-file-pdf" style="font-size:1.4rem;color:#e53e3e;"></i>
                                     <div>
-                                        <div style="font-size:0.95rem;">PDF Slides</div>
-                                        <div style="font-size:0.75rem;font-weight:400;color:#64748b;">Click to download</div>
+                                        <div style="font-size:0.95rem;">{{ __('messages.wsd_pdf_slides') }}</div>
+                                        <div style="font-size:0.75rem;font-weight:400;color:#64748b;">{{ __('messages.wsd_click_download') }}</div>
                                     </div>
                                     <i class="fa-solid fa-download" style="margin-left:auto;"></i>
                                 </a>
@@ -192,7 +196,7 @@
                                 @if($workshop->useful_links)
                                 <div style="padding:14px 18px;background:rgba(6,111,108,0.07);border-radius:10px;border:1px solid rgba(6,111,108,0.15);">
                                     <div style="display:flex;align-items:center;gap:10px;font-weight:600;color:var(--primary);margin-bottom:10px;">
-                                        <i class="fa-solid fa-link"></i> Useful Links
+                                        <i class="fa-solid fa-link"></i> {{ __('messages.wsd_links') }}
                                     </div>
                                     @foreach(explode(',', $workshop->useful_links) as $link)
                                         @php $link = trim($link); @endphp
@@ -216,44 +220,49 @@
 
                         <!-- Capacity Progress Card -->
                         <div class="instructor-card-detail animate-in" style="margin-bottom:1.5rem;">
-                            <h3><i class="fa-solid fa-chart-simple" style="margin-right:6px;"></i>Registration Status</h3>
+                            <h3><i class="fa-solid fa-chart-simple" style="margin-right:6px;"></i>{{ __('messages.wsd_reg_status') }}</h3>
                             <div style="margin-top:12px;">
                                 <div style="display:flex;justify-content:space-between;font-size:0.9rem;font-weight:600;margin-bottom:8px;">
-                                    <span>{{ $workshop->registered }} Registered</span>
-                                    <span style="color:#64748b;">{{ $workshop->capacity }} Capacity</span>
+                                    <span>{{ $workshop->registered }} {{ __('messages.ws_registered') }}</span>
+                                    <span style="color:#64748b;">{{ $workshop->capacity }} {{ __('messages.wsd_capacity') }}</span>
                                 </div>
                                 <div style="background:#f1f5f9;border-radius:999px;height:10px;overflow:hidden;">
                                     <div style="background:{{ $workshop->isFull() ? '#ef4444' : 'var(--primary)' }};height:100%;border-radius:999px;width:{{ $workshop->capacity > 0 ? min(100, round($workshop->registered / $workshop->capacity * 100)) : 0 }}%;transition:width 0.4s;"></div>
                                 </div>
                                 <p style="margin-top:8px;font-size:0.8rem;color:{{ $workshop->isFull() ? '#ef4444' : '#64748b' }};">
-                                    @if($workshop->isFull()) <i class="fa-solid fa-lock"></i> This workshop is full
-                                    @else <i class="fa-solid fa-circle-check" style="color:var(--primary);"></i> {{ $workshop->capacity - $workshop->registered }} seats remaining @endif
+                                    @if($workshop->isFull()) <i class="fa-solid fa-lock"></i> {{ __('messages.wsd_is_full') }}
+                                    @else <i class="fa-solid fa-circle-check" style="color:var(--primary);"></i> {{ $workshop->capacity - $workshop->registered }} {{ __('messages.wsd_seats_remaining') }} @endif
                                 </p>
                             </div>
                         </div>
 
                         <!-- Registered Students -->
                         <div class="instructor-card-detail animate-in">
-                            <h3><i class="fa-solid fa-users" style="margin-right:6px;"></i>Registered Students
+                            <h3><i class="fa-solid fa-users" style="margin-right:6px;"></i>{{ __('messages.wsd_reg_students') }}
                                 <span style="background:var(--primary);color:white;font-size:0.75rem;padding:2px 8px;border-radius:999px;margin-left:8px;">{{ $workshop->registered }}</span>
                             </h3>
                             @if($workshop->registeredUsers->count() > 0)
                             <div style="margin-top:12px;display:flex;flex-direction:column;gap:10px;max-height:300px;overflow-y:auto;">
                                 @foreach($workshop->registeredUsers as $student)
-                                <div style="display:flex;align-items:center;gap:10px;padding:8px;border-radius:8px;background:#f8fafc;">
+                                <div style="display:flex;align-items:center;gap:10px;padding:8px;border-radius:8px;background:#f8fafc;position:relative;">
                                     <img src="https://ui-avatars.com/api/?name={{ urlencode($student->first_name . ' ' . $student->last_name) }}&background=066f6c&color=fff&size=36"
                                          style="width:36px;height:36px;border-radius:50%;" alt="{{ $student->first_name }}">
-                                    <div>
+                                    <div style="flex-grow:1;">
                                         <div style="font-size:0.9rem;font-weight:600;color:#1e293b;">{{ $student->first_name }} {{ $student->last_name }}</div>
                                         <div style="font-size:0.75rem;color:#64748b;">{{ $student->email }}</div>
                                     </div>
+                                    @if(auth()->check() && auth()->id() == $workshop->user_id)
+                                    <button onclick="removeAttendee({{ $workshop->id }}, {{ $student->id }})" style="background:none;border:none;color:#ef4444;cursor:pointer;padding:4px;" title="Remove Attendee">
+                                        <i class="fa-solid fa-user-minus"></i>
+                                    </button>
+                                    @endif
                                 </div>
                                 @endforeach
                             </div>
                             @else
                             <p style="margin-top:12px;color:#94a3b8;font-size:0.9rem;text-align:center;padding:20px 0;">
                                 <i class="fa-solid fa-user-slash" style="font-size:1.5rem;display:block;margin-bottom:8px;"></i>
-                                No students registered yet
+                                {{ __('messages.wsd_no_students') }}
                             </p>
                             @endif
                         </div>
@@ -275,7 +284,7 @@
         function registerWorkshop(workshopId) {
             const btn = document.getElementById('registerBtn');
             btn.disabled = true;
-            btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Registering...';
+            btn.innerHTML = `<i class="fa-solid fa-spinner fa-spin"></i> {{ __('messages.wsd_registering') }}`;
 
             const csrfToken = document.querySelector('meta[name="csrf-token"]').content;
             fetch(`/workshops/${workshopId}/register`, {
@@ -285,7 +294,7 @@
             .then(r => r.json())
             .then(data => {
                 if (data.success) {
-                    btn.innerHTML = '<i class="fa-solid fa-check"></i> Registered ✅';
+                    btn.innerHTML = `<i class="fa-solid fa-check"></i> {{ __('messages.wsd_already_reg') }} ✅`;
                     btn.style.backgroundColor = '#059669';
                     // Update counter
                     const countEls = document.querySelectorAll('[data-registered]');
@@ -294,14 +303,32 @@
                     setTimeout(() => location.reload(), 1200);
                 } else {
                     btn.disabled = false;
-                    btn.innerHTML = '<i class="fa-solid fa-user-plus"></i> Register Now';
+                    btn.innerHTML = `<i class="fa-solid fa-user-plus"></i> {{ __('messages.wsd_reg_now') }}`;
                     alert(data.message || 'Registration failed');
                 }
             })
             .catch(() => {
                 btn.disabled = false;
-                btn.innerHTML = '<i class="fa-solid fa-user-plus"></i> Register Now';
+                btn.innerHTML = `<i class="fa-solid fa-user-plus"></i> {{ __('messages.wsd_reg_now') }}`;
             });
+        }
+
+        function removeAttendee(workshopId, userId) {
+            if(!confirm('Are you sure you want to remove this attendee?')) return;
+            const csrfToken = document.querySelector('meta[name="csrf-token"]').content;
+            fetch(`/workshops/${workshopId}/attendees/${userId}`, {
+                method: 'DELETE',
+                headers: { 'Accept': 'application/json', 'X-CSRF-TOKEN': csrfToken }
+            })
+            .then(r => r.json())
+            .then(data => {
+                if(data.success) {
+                    location.reload();
+                } else {
+                    alert(data.message);
+                }
+            })
+            .catch(()=> alert('Error removing attendee.'));
         }
     </script>
 </body>

@@ -41,46 +41,21 @@
                             <div class="notification-wrapper" style="position: relative;">
                                 <button class="btn-icon notification-btn" id="notificationBtn">
                                     <i class="fa-solid fa-bell"></i>
-                                    <span class="notification-badge">3</span>
+                                    <span class="notification-badge" id="adminNotifBadge" style="display:none;">0</span>
                                 </button>
 
                                 <div class="notification-dropdown" id="notificationDropdown">
                                     <div class="dropdown-header">
                                         <h4>Notifications</h4>
-                                        <span class="mark-read">Mark all as read</span>
+                                        <span class="mark-read" id="markAllReadBtn" style="cursor:pointer;">Mark all as read</span>
                                     </div>
-                                    <div class="dropdown-body">
-                                        <div class="notification-item unread">
-                                            <div class="notif-icon"
-                                                style="background: rgba(16, 185, 129, 0.1); color: #10b981;"><i
-                                                    class="fa-solid fa-user-plus"></i></div>
-                                            <div class="notif-content">
-                                                <p><strong>Ahmad Ali</strong> registered as a new user.</p>
-                                                <span class="notif-time">2 mins ago</span>
-                                            </div>
-                                        </div>
-                                        <div class="notification-item unread">
-                                            <div class="notif-icon"
-                                                style="background: rgba(245, 158, 11, 0.1); color: #f59e0b;"><i
-                                                    class="fa-solid fa-calendar-check"></i></div>
-                                            <div class="notif-content">
-                                                <p>New workshop <strong>"React Basics"</strong> pending approval.</p>
-                                                <span class="notif-time">1 hour ago</span>
-                                            </div>
-                                        </div>
-                                        <div class="notification-item">
-                                            <div class="notif-icon"
-                                                style="background: rgba(59, 130, 246, 0.1); color: #3b82f6;"><i
-                                                    class="fa-solid fa-cloud-arrow-up"></i></div>
-                                            <div class="notif-content">
-                                                <p><strong>Sara Khaled</strong> uploaded a new material in Software Eng.
-                                                </p>
-                                                <span class="notif-time">5 hours ago</span>
-                                            </div>
+                                    <div class="dropdown-body" id="adminNotifList">
+                                        <div style="padding:20px; text-align:center; color:#94a3b8;">
+                                            <i class="fa-solid fa-spinner fa-spin"></i>
                                         </div>
                                     </div>
                                     <div class="dropdown-footer">
-                                        <a href="{{ route('notifications.index') }}">View All Notifications</a>
+                                        <a href="#" onclick="document.querySelector('[data-tab=\'notifications\']').click(); return false;">View All Notifications</a>
                                     </div>
                                 </div>
                             </div>
@@ -131,8 +106,8 @@
                             <span>Comments</span></button>
                         <button class="admin-tab" data-tab="departments"><i class="fa-solid fa-building"></i>
                             <span>Departments</span></button>
-                        <button class="admin-tab" data-tab="settings"><i class="fa-solid fa-gear"></i>
-                            <span>Settings</span></button>
+                        <button class="admin-tab" data-tab="notifications" style="display:none;"><i class="fa-solid fa-bell"></i>
+                            <span>Notifications</span></button>
                     </div>
                 </nav>
             </div>
@@ -416,6 +391,7 @@
                                     <th>Instructor</th>
                                     <th>Year</th>
                                     <th>Semester</th>
+                                    <th>Departments</th>
                                     <th>Status</th>
                                     <th>Actions</th>
                                 </tr>
@@ -435,6 +411,13 @@
                                         <td><span class="badge"
                                                 style="background:#f0fdf4;color:#15803d;border:1px solid #bbf7d0;">Sem
                                                 {{ $c->semester }}</span></td>
+                                        <td>
+                                            @forelse($c->departments as $d)
+                                                <span class="badge" style="background:#f8fafc;color:#475569;border:1px solid #cbd5e1;margin-right:4px;display:inline-block;margin-bottom:2px;">{{ $d->name }}</span>
+                                            @empty
+                                                —
+                                            @endforelse
+                                        </td>
                                         <td><span id="course-status-badge-{{ $c->id }}"
                                                 class="badge badge-{{ $c->status }}">{{ ucfirst($c->status) }}</span>
                                         </td>
@@ -650,21 +633,26 @@
                             <tbody id="commentsBodyNative">
                                 @forelse($comments as $c)
                                     <tr>
-                                        <td><strong>{{ $c->user->first_name ?? '' }} {{ $c->user->last_name ?? '' }}</strong></td>
-                                        <td style="max-width:300px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;" title="{{ $c->body }}">
+                                        <td><strong>{{ $c->user->first_name ?? '' }}
+                                                {{ $c->user->last_name ?? '' }}</strong></td>
+                                        <td style="max-width:300px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;"
+                                            title="{{ $c->body }}">
                                             {{ $c->body }}
                                         </td>
                                         <td>{{ $c->course->title ?? 'N/A' }}</td>
                                         <td>{{ $c->created_at->format('M d, Y') }}</td>
                                         <td>
                                             <div class="action-btns">
-                                                <button class="action-btn delete" title="Delete Comment" onclick="deleteCommentDB({{ $c->id }}, this)"><i class="fa-solid fa-trash"></i></button>
+                                                <button class="action-btn delete" title="Delete Comment"
+                                                    onclick="deleteCommentDB({{ $c->id }}, this)"><i
+                                                        class="fa-solid fa-trash"></i></button>
                                             </div>
                                         </td>
                                     </tr>
                                 @empty
                                     <tr>
-                                        <td colspan="5" style="text-align:center; color:#64748b;">No comments found.</td>
+                                        <td colspan="5" style="text-align:center; color:#64748b;">No comments
+                                            found.</td>
                                     </tr>
                                 @endforelse
                             </tbody>
@@ -675,7 +663,7 @@
                 <!-- ═══ DEPARTMENTS TAB ═══ -->
                 <div class="tab-panel" id="panel-departments">
                     <div class="panel-header">
-                        <h2>Departments & Subjects</h2>
+                        <h2>Departments & Workshops</h2>
                         <div class="panel-actions">
                             <button class="btn btn-primary sm" id="addDeptBtn"><i class="fa-solid fa-plus"></i> Add
                                 Department</button>
@@ -689,7 +677,7 @@
                                     <th>Students</th>
                                     <th>Courses</th>
                                     <th>Years</th>
-                                    <th>Subjects</th>
+                                    <th>Workshops</th>
                                     <th>Actions</th>
                                 </tr>
                             </thead>
@@ -701,12 +689,12 @@
                                         <td>{{ $d->students }}</td>
                                         <td>{{ $d->courses }}</td>
                                         <td>{{ $d->years }}</td>
-                                        <td>{{ $d->subjects }}</td>
+                                        <td>{{ $d->workshops }}</td>
                                         <td>
                                             <div class="action-btns">
-                                                <button class="action-btn edit" title="Edit"><i
+                                                <button class="action-btn edit" title="Edit" onclick="editDepartment({{ $d->id }}, '{{ addslashes($d->name) }}', {{ $d->years }})"><i
                                                         class="fa-solid fa-pen"></i></button>
-                                                <button class="action-btn delete" title="Delete"><i
+                                                <button class="action-btn delete" title="Delete" onclick="deleteDepartment({{ $d->id }})"><i
                                                         class="fa-solid fa-trash"></i></button>
                                             </div>
                                         </td>
@@ -722,84 +710,94 @@
                     </div>
                 </div>
 
-                <!-- ═══ SETTINGS TAB ═══ -->
-                <div class="tab-panel" id="panel-settings">
+                <!-- ── Notifications Tab Panel ── -->
+                <div id="panel-notifications" class="tab-panel">
                     <div class="panel-header">
-                        <h2>Platform Configuration</h2>
+                        <h2>Admin Notifications</h2>
+                        <div class="panel-actions">
+                            <button class="btn-mark-all" onclick="fetch('{{ route('notifications.read-all') }}', {method: 'POST', headers: {'X-CSRF-TOKEN': document.querySelector('meta[name=csrf-token]').content, 'Accept': 'application/json'}}).then(r=>r.json()).then(d=>{if(d.success){document.querySelectorAll('#panel-notifications .an-card.unread').forEach(el=>el.classList.remove('unread'));}});" style="background: rgba(0, 98, 87, 0.08); color: #006257; border: 1px solid rgba(0, 98, 87, 0.2); padding: 8px 16px; border-radius: 6px; font-size: 0.85rem; font-weight: 600; cursor: pointer; transition: all 0.2s; display: inline-flex; align-items: center; gap: 6px;" onmouseover="this.style.background='rgba(0, 98, 87, 0.15)'" onmouseout="this.style.background='rgba(0, 98, 87, 0.08)'">
+                                <i class="fa-solid fa-check-double"></i> Mark All as Read
+                            </button>
+                        </div>
                     </div>
-                    <div class="data-table-wrap" style="padding: 2.5rem; background: white;">
-                        <div class="settings-grid">
-                            <div class="settings-section">
-                                <h3 style="color:var(--primary-dark); margin-bottom:1.5rem; font-weight:800;"><i
-                                        class="fa-solid fa-sliders"
-                                        style="color:var(--primary); margin-right:10px;"></i> General Settings</h3>
-                                <div class="form-group">
-                                    <label>Platform Name</label>
-                                    <input type="text" value="EngHub" />
-                                </div>
-                                <div class="form-group">
-                                    <label>Platform Description</label>
-                                    <textarea rows="3">Engineering the Future, Together. A collaborative platform for engineering students.</textarea>
-                                </div>
-                            </div>
 
-                            <div class="settings-section">
-                                <h3 style="color:var(--primary-dark); margin-bottom:1.5rem; font-weight:800;"><i
-                                        class="fa-solid fa-shield-halved"
-                                        style="color:var(--secondary); margin-right:10px;"></i> Security & Access</h3>
-                                <div class="form-group">
-                                    <div class="toggle-group">
-                                        <div class="toggle-text">
-                                            <strong>Allow Student Uploads</strong>
-                                            <span>Enable students to submit courses</span>
-                                        </div>
-                                        <label class="switch">
-                                            <input type="checkbox" checked>
-                                            <span class="slider round"></span>
-                                        </label>
-                                    </div>
-                                </div>
-                                <div class="form-group">
-                                    <div class="toggle-group">
-                                        <div class="toggle-text">
-                                            <strong>Email Verification</strong>
-                                            <span>Require email confirmation for new users</span>
-                                        </div>
-                                        <label class="switch">
-                                            <input type="checkbox" checked>
-                                            <span class="slider round"></span>
-                                        </label>
-                                    </div>
-                                </div>
-                            </div>
+                    @php
+                        $typeConfig = [
+                            'material_uploaded' => [
+                                'color'      => '#3b82f6',
+                                'bg'         => 'rgba(59,130,246,0.12)',
+                                'icon'       => 'fa-cloud-arrow-up',
+                                'label'      => 'Material',
+                                'label_bg'   => '#dbeafe',
+                                'label_color'=> '#1d4ed8',
+                            ],
+                            'comment_reported' => [
+                                'color'      => '#ef4444',
+                                'bg'         => 'rgba(239,68,68,0.12)',
+                                'icon'       => 'fa-flag',
+                                'label'      => 'Report',
+                                'label_bg'   => '#fee2e2',
+                                'label_color'=> '#b91c1c',
+                            ],
+                            'workshop_created' => [
+                                'color'      => '#f59e0b',
+                                'bg'         => 'rgba(245,158,11,0.12)',
+                                'icon'       => 'fa-calendar-plus',
+                                'label'      => 'Workshop',
+                                'label_bg'   => '#fef3c7',
+                                'label_color'=> '#b45309',
+                            ],
+                        ];
+                        $defaultConfig = [
+                            'color'       => '#006257',
+                            'bg'          => 'rgba(0,98,87,0.12)',
+                            'icon'        => 'fa-bell',
+                            'label'       => 'General',
+                            'label_bg'    => '#e0f2f1',
+                            'label_color' => '#004d40',
+                        ];
+                    @endphp
 
-                            <div class="settings-section full-width"
-                                style="border-top: 1px solid #f1f5f9; padding-top: 2rem; margin-top: 1rem;">
-                                <h3 style="color:var(--primary-dark); margin-bottom:1.5rem; font-weight:800;"><i
-                                        class="fa-solid fa-gears" style="color:#7c3aed; margin-right:10px;"></i>
-                                    System Behavior</h3>
-                                <div class="grid-2">
-                                    <div class="form-group">
-                                        <label>Auto-approve Materials</label>
-                                        <select>
-                                            <option>Disabled</option>
-                                            <option>Enabled</option>
-                                        </select>
-                                    </div>
-                                    <div class="form-group">
-                                        <label>Support Email Address</label>
-                                        <input type="email" value="support@enghub.edu" />
-                                    </div>
+                    <div style="background:white; border-radius:var(--radius-lg); border:1px solid var(--border-color); padding:24px;">
+                        <div style="display:flex; flex-direction:column; gap:12px;">
+                            @if(isset($notifications) && $notifications->count() > 0)
+                                @foreach($notifications as $notification)
+                                    @php
+                                        $data   = $notification->data ?? [];
+                                        $type   = $data['type']    ?? 'general';
+                                        $cfg    = $typeConfig[$type] ?? $defaultConfig;
+                                        $unread = is_null($notification->read_at);
+                                        $actionUrl = route('notifications.read', $notification->id);
+                                    @endphp
+                                    <a href="{{ $actionUrl }}" class="an-card {{ $unread ? 'unread' : '' }}" style="display:flex; align-items:flex-start; gap:16px; padding:16px; border:1px solid {{ $unread ? 'var(--primary)' : 'var(--border-color)' }}; border-radius:12px; text-decoration:none; color:var(--text-color); background:{{ $unread ? 'rgba(0,98,87,0.03)' : '#fff' }}; transition:all 0.2s;">
+                                        <div style="width:48px; height:48px; border-radius:10px; display:flex; align-items:center; justify-content:center; flex-shrink:0; background:{{ $cfg['bg'] }}; color:{{ $cfg['color'] }}; font-size:1.2rem;">
+                                            <i class="fa-solid {{ $cfg['icon'] }}"></i>
+                                        </div>
+                                        <div style="flex:1;">
+                                            <div style="font-weight:700; font-size:0.95rem; margin-bottom:4px; color:var(--text-color);">{{ $data['title'] ?? 'Notification' }}</div>
+                                            <div style="font-size:0.85rem; color:var(--text-secondary); margin-bottom:8px; line-height:1.5;">{{ $data['message'] ?? '' }}</div>
+                                            <div style="display:flex; align-items:center; gap:12px;">
+                                                <span style="font-size:0.75rem; color:#94a3b8;"><i class="fa-regular fa-clock" style="margin-right:4px;"></i>{{ $notification->created_at->diffForHumans() }}</span>
+                                                <span style="font-size:0.7rem; font-weight:600; padding:2px 8px; border-radius:999px; background:{{ $cfg['label_bg'] }}; color:{{ $cfg['label_color'] }};">{{ $cfg['label'] }}</span>
+                                            </div>
+                                        </div>
+                                        @if($unread)
+                                            <div style="width:10px; height:10px; background:var(--primary); border-radius:50%; margin-top:8px;"></div>
+                                        @endif
+                                    </a>
+                                @endforeach
+                            @else
+                                <div style="text-align:center; padding:48px; color:#94a3b8;">
+                                    <i class="fa-solid fa-bell-slash" style="font-size:3rem; margin-bottom:16px; color:#cbd5e1;"></i>
+                                    <h3 style="color:#64748b; margin-bottom:8px;">No notifications</h3>
+                                    <p style="font-size:0.9rem;">You're all caught up!</p>
                                 </div>
-                                <div style="display:flex; gap:1rem; margin-top:2rem;">
-                                    <button class="btn-save" onclick="showToast('Settings saved successfully!')">Save
-                                        All Changes</button>
-                                    <button class="btn-cancel">Reset Defaults</button>
-                                </div>
-                            </div>
+                            @endif
                         </div>
                     </div>
                 </div>
+
+
 
             </div>
         </main>
@@ -872,12 +870,11 @@
 
                 <div class="input-group full-width" style="margin-bottom: 1.5rem;">
                     <label>Department <span class="required" style="color:#ef4444">*</span></label>
-                    <select required>
+                    <select name="department_id" required>
                         <option value="">Select Department</option>
-                        <option value="se">Software Engineering</option>
-                        <option value="ce">Civil Engineering</option>
-                        <option value="ee">Electrical Engineering</option>
-                        <option value="me">Mechanical Engineering</option>
+                        @foreach($departments as $dept)
+                            <option value="{{ $dept->id }}">{{ $dept->name }}</option>
+                        @endforeach
                     </select>
                 </div>
 
@@ -1114,6 +1111,39 @@
         </div>
     </div>
 
+    <!-- Edit Department Modal -->
+    <div class="modal-overlay" id="editDeptModal">
+        <div class="modal" style="max-width: 500px;">
+            <div class="modal-header">
+                <h3><i class="fa-solid fa-pen"></i> Edit Department</h3>
+                <button class="modal-close" onclick="closeModal('editDeptModal')"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+            <form onsubmit="event.preventDefault(); submitEditDepartment();">
+                <input type="hidden" id="editDeptId" />
+                <div class="input-group" style="margin-bottom: 1.5rem;">
+                    <label>Department Name <span class="required" style="color:#ef4444">*</span></label>
+                    <input type="text" id="editDeptName" required placeholder="e.g. Biomedical Engineering"
+                        style="width:100%; padding:0.85rem; border:1.5px solid #e2e8f0; border-radius:8px; background:#f8fafc;" />
+                </div>
+                <div class="input-group" style="margin-bottom: 1.5rem;">
+                    <label>Number of Years <span class="required" style="color:#ef4444">*</span></label>
+                    <select id="editDeptYears" required
+                        style="width:100%; padding:0.85rem; border:1.5px solid #e2e8f0; border-radius:8px; background:#f8fafc;">
+                        <option value="4">4 Years</option>
+                        <option value="5">5 Years</option>
+                    </select>
+                </div>
+                <div class="modal-footer"
+                    style="display: flex; justify-content: flex-end; gap: 1rem; margin-top: 2rem;">
+                    <button type="button" class="btn btn-outline" onclick="closeModal('editDeptModal')"
+                        style="padding: 0.8rem 1.5rem; border-radius: var(--radius-md); font-weight: 700; border: 2px solid #e2e8f0; background: white; color: #64748b; cursor: pointer;">Cancel</button>
+                    <button type="submit" class="btn btn-primary" id="submitEditDeptBtn"
+                        style="padding: 0.8rem 1.5rem; border-radius: var(--radius-md); font-weight: 700; border: none; cursor: pointer;"><i
+                            class="fa-solid fa-save"></i> Save Changes</button>
+                </div>
+            </form>
+        </div>
+    </div>
     <!-- Toast Container -->
     <div class="toast-container" id="toastContainer"></div>
 
@@ -1177,6 +1207,20 @@
                         </select>
                     </div>
                 </div>
+                <div style="margin-bottom:1rem;">
+                    <label
+                        style="display:block; font-weight:600; color:#374151; margin-bottom:4px; font-size:0.9rem;">Departments</label>
+                    <div style="display:grid; grid-template-columns: 1fr 1fr; gap:0.5rem; max-height:100px; overflow-y:auto; border:1.5px solid #e2e8f0; border-radius:8px; padding:0.8rem;"
+                        id="ac_departments">
+                        @foreach ($departments as $dept)
+                            <label
+                                style="display:flex; align-items:center; gap:0.5rem; font-size:0.85rem; color:#475569; cursor:pointer;">
+                                <input type="checkbox" value="{{ $dept->id }}" class="ac_department_checkbox">
+                                {{ $dept->name }}
+                            </label>
+                        @endforeach
+                    </div>
+                </div>
                 <div style="margin-bottom:1.5rem;">
                     <label
                         style="display:block; font-weight:600; color:#374151; margin-bottom:4px; font-size:0.9rem;">Status</label>
@@ -1224,6 +1268,9 @@
             btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin" style="margin-right:6px;"></i>Saving...';
             btn.disabled = true;
 
+            const selectedDepts = Array.from(document.querySelectorAll('.ac_department_checkbox:checked')).map(cb => cb
+                .value);
+
             const data = {
                 title: document.getElementById('ac_title').value,
                 code: document.getElementById('ac_code').value,
@@ -1231,6 +1278,7 @@
                 year: document.getElementById('ac_year').value,
                 semester: document.getElementById('ac_semester').value,
                 status: document.getElementById('ac_status').value,
+                departments: selectedDepts,
             };
 
             try {
@@ -1264,6 +1312,146 @@
         }
     </script>
     <script src="{{ asset('js/admin.js') }}"></script>
+
+    {{-- ─── Admin Real Notifications Script ─── --}}
+    <script>
+    (function () {
+        const NOTIF_API   = '{{ route("admin.notifications.json") }}';
+        const CSRF        = '{{ csrf_token() }}';
+        const badge       = document.getElementById('adminNotifBadge');
+        const list        = document.getElementById('adminNotifList');
+        const markAllBtn  = document.getElementById('markAllReadBtn');
+        const btn         = document.getElementById('notificationBtn');
+        const dropdown    = document.getElementById('notificationDropdown');
+
+        // ── Icon colours per type ──
+        const typeMap = {
+            material_uploaded : { color: '#3b82f6', bg: 'rgba(59,130,246,0.1)' },
+            comment_reported  : { color: '#ef4444', bg: 'rgba(239,68,68,0.1)'  },
+            workshop_created  : { color: '#f59e0b', bg: 'rgba(245,158,11,0.1)' },
+        };
+
+        function renderNotif(n) {
+            const style = typeMap[n.type] || { color: n.color, bg: n.bg_color };
+            const unreadClass = n.is_unread ? 'unread' : '';
+            return `
+            <a href="${n.read_url}" class="notification-item ${unreadClass}" style="text-decoration:none;display:flex;align-items:flex-start;gap:10px;padding:12px 16px;border-bottom:1px solid #f1f5f9;transition:background .15s;" onmouseover="this.style.background='#f8fafc'" onmouseout="this.style.background='transparent'">
+                <div class="notif-icon" style="background:${style.bg};color:${style.color};flex-shrink:0;width:36px;height:36px;border-radius:10px;display:flex;align-items:center;justify-content:center;">
+                    <i class="fa-solid ${n.icon}"></i>
+                </div>
+                <div class="notif-content" style="flex:1;min-width:0;">
+                    <p style="margin:0 0 2px;font-size:.85rem;font-weight:600;color:#1e293b;line-height:1.3;">${n.title}</p>
+                    <p style="margin:0 0 4px;font-size:.78rem;color:#64748b;line-height:1.4;white-space:normal;">${n.message}</p>
+                    <span class="notif-time" style="font-size:.72rem;color:#94a3b8;">${n.time}</span>
+                </div>
+                ${n.is_unread ? '<span style="width:8px;height:8px;background:#6366f1;border-radius:50%;flex-shrink:0;margin-top:4px;"></span>' : ''}
+            </a>`;
+        }
+
+        async function loadNotifications() {
+            try {
+                const res  = await fetch(NOTIF_API, { headers: { 'Accept': 'application/json' } });
+                const data = await res.json();
+
+                // Update badge
+                if (data.unread_count > 0) {
+                    badge.textContent = data.unread_count > 99 ? '99+' : data.unread_count;
+                    badge.style.display = '';
+                } else {
+                    badge.style.display = 'none';
+                }
+
+                // Render notifications
+                if (data.notifications.length === 0) {
+                    list.innerHTML = '<div style="padding:24px;text-align:center;color:#94a3b8;font-size:.85rem;"><i class="fa-solid fa-bell-slash" style="font-size:1.5rem;display:block;margin-bottom:8px;"></i>No notifications</div>';
+                } else {
+                    list.innerHTML = data.notifications.map(renderNotif).join('');
+                }
+            } catch (e) {
+                list.innerHTML = '<div style="padding:16px;text-align:center;color:#ef4444;font-size:.83rem;">Failed to load notifications</div>';
+            }
+        }
+
+        // Toggle dropdown
+        btn.addEventListener('click', function (e) {
+            e.stopPropagation();
+            const isOpen = dropdown.style.display === 'block';
+            dropdown.style.display = isOpen ? 'none' : 'block';
+            if (!isOpen) loadNotifications();
+        });
+
+        document.addEventListener('click', function (e) {
+            if (!dropdown.contains(e.target) && e.target !== btn) {
+                dropdown.style.display = 'none';
+            }
+        });
+
+        // Mark all as read
+        markAllBtn.addEventListener('click', async function () {
+            await fetch('{{ route("notifications.read-all") }}', {
+                method: 'POST',
+                headers: { 'X-CSRF-TOKEN': CSRF, 'Accept': 'application/json' }
+            });
+            badge.style.display = 'none';
+            // Re-render without unread dots
+            document.querySelectorAll('#adminNotifList .notification-item').forEach(el => {
+                el.classList.remove('unread');
+                const dot = el.querySelector('span[style*="border-radius:50%"]');
+                if (dot) dot.remove();
+            });
+        });
+
+        // Auto-refresh badge every 60s
+        setInterval(async () => {
+            try {
+                const res  = await fetch(NOTIF_API, { headers: { 'Accept': 'application/json' } });
+                const data = await res.json();
+                if (data.unread_count > 0) {
+                    badge.textContent = data.unread_count > 99 ? '99+' : data.unread_count;
+                    badge.style.display = '';
+                } else {
+                    badge.style.display = 'none';
+                }
+            } catch (_) {}
+        }, 60000);
+
+        // Initial badge load
+        (async () => {
+            try {
+                const res  = await fetch(NOTIF_API, { headers: { 'Accept': 'application/json' } });
+                const data = await res.json();
+                if (data.unread_count > 0) {
+                    badge.textContent = data.unread_count > 99 ? '99+' : data.unread_count;
+                    badge.style.display = '';
+                }
+            } catch (_) {}
+        })();
+
+        // Open correct tab when clicking a notification link containing #tab
+        document.addEventListener('click', function (e) {
+            const link = e.target.closest('a[href*="#"]');
+            if (!link) return;
+            const hash = link.getAttribute('href').split('#')[1];
+            if (!hash) return;
+            const targetTab = document.querySelector(`[data-tab="${hash}"]`);
+            if (targetTab) {
+                e.preventDefault();
+                targetTab.click();
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+                dropdown.style.display = 'none';
+            }
+        });
+
+        // Check hash on page load to switch tabs correctly if coming from a redirect
+        if (window.location.hash) {
+            const hash = window.location.hash.substring(1);
+            const targetTab = document.querySelector(`[data-tab="${hash}"]`);
+            if (targetTab) {
+                targetTab.click();
+            }
+        }
+    })();
+    </script>
 </body>
 
 </html>

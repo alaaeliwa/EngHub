@@ -16,9 +16,9 @@ class AdminController extends Controller
     public function index()
     {
         // ── Table Data ──
-        $users = User::select('id', 'first_name as name', 'email', 'role', 'academic_year as dept', 'status')->get();
+        $users = User::select('id', 'first_name as name', 'email', 'role', 'major as dept', 'status')->get();
 
-        $courses = Course::select('id', 'title', 'code', 'instructor', 'status', 'year', 'semester')->get();
+        $courses = Course::with('departments')->select('id', 'title', 'code', 'instructor', 'status', 'year', 'semester')->get();
 
         $materials = Material::select('id', 'title', 'type', 'status', 'file_path')
             ->selectRaw("(SELECT first_name FROM users WHERE id = user_id) as uploader")
@@ -28,6 +28,12 @@ class AdminController extends Controller
 
         $workshops = Workshop::select('id', 'title', 'date', 'location', 'registered', 'status')->get();
         $departments = Department::select('id', 'name', 'students', 'courses', 'years', 'subjects')->get();
+        // Dynamically count students based on major and courses/workshops based on relation
+        foreach ($departments as $dept) {
+            $dept->students = User::where('major', $dept->name)->count();
+            $dept->courses = $dept->courses()->count();
+            $dept->workshops = $dept->workshops()->count();
+        }
 
         $comments = Comment::with('user', 'course')
             ->orderBy('created_at', 'desc')
@@ -52,6 +58,9 @@ class AdminController extends Controller
         $recentUsers     = User::latest()->take(5)->get(['id', 'first_name', 'last_name', 'role', 'created_at']);
         $recentMaterials = Material::latest()->take(5)->get(['id', 'title', 'user_id', 'created_at']);
 
+        // ── Admin Notifications ──
+        $notifications = auth()->user()->notifications()->take(100)->get();
+
         // ── Activity Chart (Users registered last 7 days) ──
         $activityData = collect(range(6, 0))->map(function ($daysAgo) {
             $date = \Carbon\Carbon::now()->subDays($daysAgo);
@@ -67,7 +76,7 @@ class AdminController extends Controller
         return view('pages.admin', compact(
             'users', 'courses', 'materials', 'workshops', 'departments',
             'stats', 'recentUsers', 'recentMaterials', 'activityData', 'topCoursesList',
-            'comments'
+            'comments', 'notifications'
         ));
     }
 
@@ -80,6 +89,8 @@ class AdminController extends Controller
             'year'       => 'required|integer|min:1|max:5',
             'semester'   => 'required|integer|in:1,2',
             'status'     => 'nullable|in:approved,pending,rejected',
+            'departments'=> 'nullable|array',
+            'departments.*'=> 'exists:departments,id',
         ]);
 
         $course = Course::create([
@@ -90,6 +101,13 @@ class AdminController extends Controller
             'semester'   => $request->semester,
             'status'     => $request->status ?? 'approved',
         ]);
+
+        if ($request->has('departments')) {
+            $course->departments()->attach($request->departments);
+        }
+
+        // load departments to return in JSON
+        $course->load('departments');
 
         return response()->json(['success' => true, 'course' => $course]);
     }
@@ -240,6 +258,47 @@ class AdminController extends Controller
     public function deleteComment($id)
     {
         Comment::findOrFail($id)->delete();
+        return response()->json(['success' => true]);
+    }
+
+    // ── Department Management ──
+    public function storeDepartment(Request $request)
+    {
+        $request->validate([
+            'name' => 'required|string|max:255',
+            'years' => 'required|integer|min:1|max:7',
+        ]);
+
+        $department = Department::create([
+            'name' => $request->name,
+            'years' => $request->years,
+            'students' => 0,
+            'courses' => 0,
+            'subjects' => 0,
+        ]);
+
+        return response()->json(['success' => true, 'department' => $department]);
+    }
+
+    public function updateDepartment(Request $request, $id)
+    {
+        $request->validate([
+            'name' => 'required|string|max:255',
+            'years' => 'required|integer|min:1|max:7',
+        ]);
+
+        $department = Department::findOrFail($id);
+        $department->update([
+            'name' => $request->name,
+            'years' => $request->years,
+        ]);
+
+        return response()->json(['success' => true]);
+    }
+
+    public function deleteDepartment($id)
+    {
+        Department::findOrFail($id)->delete();
         return response()->json(['success' => true]);
     }
 }

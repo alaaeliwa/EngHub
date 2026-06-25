@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="en">
+<html lang="{{ App::getLocale() }}" dir="{{ App::getLocale() == 'ar' ? 'rtl' : 'ltr' }}">
 
 <head>
     <meta charset="UTF-8" />
@@ -10,7 +10,7 @@
     <link rel="stylesheet" href="{{ asset('style/dashboard.css') }}" />
     <link rel="stylesheet" href="{{ asset('style/profile.css') }}" />
 
-    <title>Student Profile | EngHub</title>
+    <title>{{ __('messages.prof_title') }} | EngHub</title>
 </head>
 
 <body>
@@ -24,11 +24,11 @@
 
                 <!-- Profile Header -->
                 <div class="profile-header-card">
-                    <div class="profile-cover">
+                    <div class="profile-cover" style="background-image: url('{{ Auth::user()->cover_photo ? asset('storage/' . Auth::user()->cover_photo) : 'https://images.unsplash.com/photo-1517245386807-bb43f82c33c4?auto=format&fit=crop&q=80&w=2000' }}'); background-size: cover; background-position: center;" id="profile-cover-preview">
                         <button class="cover-upload-btn" onclick="document.getElementById('cover-upload').click()">
-                            <i class="fa-solid fa-camera"></i> Change Cover
+                            <i class="fa-solid fa-camera"></i> {{ __('messages.prof_change_cover') }}
                         </button>
-                        <input type="file" id="cover-upload" style="display: none;" accept="image/*">
+                        <input type="file" id="cover-upload" name="cover_photo" form="profile-update-form" style="display: none;" accept="image/*" onchange="previewCoverImage(event)">
                     </div>
 
                     <div class="profile-info-section">
@@ -46,7 +46,7 @@
                             </div>
                             <button class="btn" style="margin-bottom: var(--space-md);"
                                 onclick="toggleEditProfile()">
-                                <i class="fa-solid fa-user-pen" style="margin-right: 8px;"></i> Edit Profile
+                                <i class="fa-solid fa-user-pen" style="margin-right: 8px;"></i> {{ __('messages.prof_edit') }}
                             </button>
                         </div>
 
@@ -54,21 +54,21 @@
                         <div class="profile-meta">
                             <div class="profile-meta-item">
                                 <i class="fa-solid fa-graduation-cap" style="color: var(--primary);"></i>
-                                <span>{{ Auth::user()->major ?? 'Engineering' }}</span>
+                                <span>{{ Auth::user()->major ? __('messages.prof_' . str_replace(' ', '_', strtolower(Auth::user()->major))) : __('messages.prof_eng') }}</span>
                             </div>
                             <div class="profile-meta-item">
                                 <i class="fa-solid fa-calendar-days" style="color: var(--primary);"></i>
-                                <span>{{ Auth::user()->academic_year ?? 'Year Not Set' }}</span>
+                                <span>{{ Auth::user()->academic_year ? __('messages.prof_year') . ' ' . preg_replace('/[^0-9]/', '', Auth::user()->academic_year) : __('messages.prof_yr_not_set') }}</span>
                             </div>
                             <div class="profile-meta-item">
                                 <i class="fa-solid fa-location-dot" style="color: var(--primary);"></i>
-                                <span>Engineering Faculty</span>
+                                <span>{{ __('messages.prof_faculty') }}</span>
                             </div>
                         </div>
 
                         <!-- Edit Form -->
                         <div class="profile-edit-form" id="edit-profile-form">
-                            <h3 style="margin-top:0; color: var(--primary-dark);">Edit Details</h3>
+                            <h3 style="margin-top:0; color: var(--primary-dark);">{{ __('messages.prof_edit_details') }}</h3>
                             <form method="POST" action="{{ route('profile.update') }}" id="profile-update-form"
                                 enctype="multipart/form-data">
                                 @csrf
@@ -77,63 +77,67 @@
                                     <div class="input-wrapper">
                                         <label
                                             style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 5px; display: block;">First
-                                            Name</label>
+                                            {{ __('messages.prof_fname') }}</label>
                                         <input type="text" name="first_name" value="{{ Auth::user()->first_name }}"
                                             required />
                                     </div>
                                     <div class="input-wrapper">
                                         <label
                                             style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 5px; display: block;">Last
-                                            Name</label>
+                                            {{ __('messages.prof_lname') }}</label>
                                         <input type="text" name="last_name" value="{{ Auth::user()->last_name }}"
                                             required />
                                     </div>
                                     <div class="input-wrapper">
                                         <label
-                                            style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 5px; display: block;">Major</label>
+                                            style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 5px; display: block;">{{ __('messages.prof_major') }}</label>
                                         <select name="major">
-                                            <option value="">Select Major...</option>
+                                            <option value="">{{ __('messages.prof_sel_major') }}</option>
                                             <option value="Software Engineering"
                                                 {{ Auth::user()->major == 'Software Engineering' ? 'selected' : '' }}>
-                                                Software Engineering</option>
+                                                {{ __('messages.prof_soft_eng') }}</option>
                                             <option value="Computer Engineering"
                                                 {{ Auth::user()->major == 'Computer Engineering' ? 'selected' : '' }}>
-                                                Computer Engineering</option>
+                                                {{ __('messages.prof_comp_eng') }}</option>
                                             <option value="Civil Engineering"
                                                 {{ Auth::user()->major == 'Civil Engineering' ? 'selected' : '' }}>
-                                                Civil Engineering</option>
+                                                {{ __('messages.prof_civil_eng') }}</option>
                                             <option value="Electrical Engineering"
                                                 {{ Auth::user()->major == 'Electrical Engineering' ? 'selected' : '' }}>
-                                                Electrical Engineering</option>
+                                                {{ __('messages.prof_elec_eng') }}</option>
                                         </select>
                                     </div>
                                     <div class="input-wrapper">
                                         <label
-                                            style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 5px; display: block;">Academic
-                                            Year</label>
+                                            style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 5px; display: block;">{{ __('messages.up_lbl_year') }}</label>
                                         <select name="academic_year">
-                                            <option value="">Select Year...</option>
+                                            <option value="">{{ __('messages.prof_sel_year') }}</option>
                                             <option value="Year 1"
-                                                {{ Auth::user()->academic_year == 'Year 1' ? 'selected' : '' }}>Year 1
+                                                {{ Auth::user()->academic_year == 'Year 1' ? 'selected' : '' }}>{{ __('messages.prof_year') }} 1
                                             </option>
                                             <option value="Year 2"
-                                                {{ Auth::user()->academic_year == 'Year 2' ? 'selected' : '' }}>Year 2
+                                                {{ Auth::user()->academic_year == 'Year 2' ? 'selected' : '' }}>{{ __('messages.prof_year') }} 2
                                             </option>
                                             <option value="Year 3"
-                                                {{ Auth::user()->academic_year == 'Year 3' ? 'selected' : '' }}>Year 3
+                                                {{ Auth::user()->academic_year == 'Year 3' ? 'selected' : '' }}>{{ __('messages.prof_year') }} 3
                                             </option>
                                             <option value="Year 4"
-                                                {{ Auth::user()->academic_year == 'Year 4' ? 'selected' : '' }}>Year 4
+                                                {{ Auth::user()->academic_year == 'Year 4' ? 'selected' : '' }}>{{ __('messages.prof_year') }} 4
                                             </option>
                                             <option value="Year 5"
-                                                {{ Auth::user()->academic_year == 'Year 5' ? 'selected' : '' }}>Year 5
+                                                {{ Auth::user()->academic_year == 'Year 5' ? 'selected' : '' }}>{{ __('messages.prof_year') }} 5
                                             </option>
                                         </select>
                                     </div>
+                                    <div class="input-wrapper" style="grid-column: 1 / -1;">
+                                        <label
+                                            style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 5px; display: block;">{{ __('messages.prof_bio_skills') }}</label>
+                                        <textarea name="skills" rows="3" style="width: 100%; border: 1px solid var(--border-color); border-radius: var(--radius-md); padding: 10px; font-family: inherit;">{{ Auth::user()->skills }}</textarea>
+                                    </div>
                                 </div>
-                                <button type="submit" class="btn">Save Changes</button>
+                                <button type="submit" class="btn">{{ __('messages.prof_save') }}</button>
                                 <button type="button" class="btn btn-outline"
-                                    onclick="toggleEditProfile()">Cancel</button>
+                                    onclick="toggleEditProfile()">{{ __('messages.cd_cancel') }}</button>
                             </form>
                         </div>
                     </div>
@@ -147,21 +151,18 @@
                         <div class="profile-card">
                             <div class="profile-card-header">
                                 <h3 class="profile-card-title"><i class="fa-solid fa-bolt"
-                                        style="color: #f59e0b;"></i> Skills</h3>
-                                <button class="btn btn-outline" style="padding: 4px 8px; font-size: 0.8rem;"
-                                    onclick="addSkillPrompt()"><i class="fa-solid fa-plus"></i></button>
+                                        style="color: #f59e0b;"></i> {{ __('messages.prof_skills_bio') }}</h3>
                             </div>
-                            <div class="skills-container" id="skills-list">
-                                <span class="skill-tag">Java <i class="fa-solid fa-xmark remove-skill"
-                                        onclick="this.parentElement.remove()"></i></span>
-                                <span class="skill-tag">Python <i class="fa-solid fa-xmark remove-skill"
-                                        onclick="this.parentElement.remove()"></i></span>
-                                <span class="skill-tag">Web Development <i class="fa-solid fa-xmark remove-skill"
-                                        onclick="this.parentElement.remove()"></i></span>
-                                <span class="skill-tag">Data Structures <i class="fa-solid fa-xmark remove-skill"
-                                        onclick="this.parentElement.remove()"></i></span>
-                                <span class="skill-tag">UI/UX Design <i class="fa-solid fa-xmark remove-skill"
-                                        onclick="this.parentElement.remove()"></i></span>
+                            <div class="skills-container" id="skills-list" style="line-height: 1.6; color: var(--text-color);">
+                                @if(Auth::user()->skills)
+                                    @foreach(explode(',', Auth::user()->skills) as $skill)
+                                        @if(trim($skill) !== '')
+                                            <span class="skill-tag">{{ trim($skill) }}</span>
+                                        @endif
+                                    @endforeach
+                                @else
+                                    <p style="color: var(--text-muted); font-size: 0.9rem;">{{ __('messages.prof_no_skills') }}</p>
+                                @endif
                             </div>
                         </div>
                     </div>
@@ -171,72 +172,34 @@
                         <div class="profile-card">
                             <div class="profile-card-header">
                                 <h3 class="profile-card-title"><i class="fa-solid fa-cloud-arrow-up"
-                                        style="color: var(--primary);"></i> My Uploads (Contributions)</h3>
+                                        style="color: var(--primary);"></i> {{ __('messages.prof_my_uploads') }}</h3>
                             </div>
 
+                            @forelse($materials as $material)
                             <div class="upload-item">
-                                <div class="upload-icon">
-                                    <i class="fa-regular fa-file-pdf"></i>
+                                <div class="upload-icon" style="{{ $material->type == 'pdf' ? 'color: #ef4444; background: rgba(239, 68, 68, 0.1);' : 'color: #3b82f6; background: rgba(59, 130, 246, 0.1);' }}">
+                                    <i class="fa-regular {{ $material->type == 'pdf' ? 'fa-file-pdf' : 'fa-file-code' }}"></i>
                                 </div>
                                 <div class="upload-details">
-                                    <span class="upload-title">Complete Midterm Summary - Data Structures</span>
-                                    <span class="upload-meta">May 05, 2026 • 4.5 MB • 120 Downloads</span>
+                                    <span class="upload-title">{{ $material->title }}</span>
+                                    <span class="upload-meta">{{ $material->created_at->format('M d, Y') }} • {{ strtoupper($material->type) }} • <span style="color: {{ $material->status == 'approved' ? '#10b981' : ($material->status == 'rejected' ? '#ef4444' : '#f59e0b') }}; font-weight: 500;">{{ __('messages.' . 'dash_' . $material->status) }}</span></span>
                                 </div>
                                 <div class="upload-actions">
-                                    <button class="btn btn-outline"
+                                    <a href="{{ route('course.details', ['id' => $material->course_id]) }}" class="btn btn-outline"
                                         style="padding: 5px 10px; border-radius: var(--radius-sm);"><i
-                                            class="fa-solid fa-pen"></i></button>
+                                            class="fa-solid fa-eye"></i></a>
                                 </div>
                             </div>
-
-                            <div class="upload-item">
-                                <div class="upload-icon" style="color: #10b981; background: rgba(16, 185, 129, 0.1);">
-                                    <i class="fa-regular fa-file-code"></i>
-                                </div>
-                                <div class="upload-details">
-                                    <span class="upload-title">Java OOP Final Project Source Code</span>
-                                    <span class="upload-meta">April 20, 2026 • 2.1 MB • 85 Downloads</span>
-                                </div>
-                                <div class="upload-actions">
-                                    <button class="btn btn-outline"
-                                        style="padding: 5px 10px; border-radius: var(--radius-sm);"><i
-                                            class="fa-solid fa-pen"></i></button>
-                                </div>
+                            @empty
+                            <div style="padding: 20px; text-align: center; color: var(--text-muted);">
+                                <i class="fa-solid fa-folder-open" style="font-size: 2rem; color: #cbd5e1; margin-bottom: 10px; display: block;"></i>
+                                {{ __('messages.prof_no_uploads') }}
                             </div>
+                            @endforelse
 
                             <a href="{{ route('upload') }}" class="btn btn-outline"
                                 style="width: 100%; margin-top: var(--space-md); border-style: dashed;"><i
-                                    class="fa-solid fa-plus"></i> Upload New Material</a>
-                        </div>
-
-                        <div class="profile-card">
-                            <div class="profile-card-header">
-                                <h3 class="profile-card-title"><i class="fa-solid fa-certificate"
-                                        style="color: #8b5cf6;"></i> Certifications & Courses</h3>
-                                <button class="btn btn-outline" style="padding: 4px 8px; font-size: 0.8rem;"><i
-                                        class="fa-solid fa-plus"></i></button>
-                            </div>
-
-                            <div class="cert-card">
-                                <div class="cert-icon">
-                                    <i class="fa-brands fa-aws"></i>
-                                </div>
-                                <div style="flex: 1;">
-                                    <div class="cert-title">AWS Certified Cloud Practitioner</div>
-                                    <div class="cert-issuer">Amazon Web Services • Issued Jan 2026</div>
-                                </div>
-                            </div>
-
-                            <div class="cert-card">
-                                <div class="cert-icon"
-                                    style="background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);">
-                                    <i class="fa-solid fa-code"></i>
-                                </div>
-                                <div style="flex: 1;">
-                                    <div class="cert-title">Advanced React and Next.js</div>
-                                    <div class="cert-issuer">Coursera • Issued Nov 2025</div>
-                                </div>
-                            </div>
+                                    class="fa-solid fa-plus"></i> {{ __('messages.prof_upload_new') }}</a>
                         </div>
                     </div>
 
@@ -266,15 +229,14 @@
             }
         }
 
-        function addSkillPrompt() {
-            const skill = prompt("Enter a new skill:");
-            if (skill && skill.trim() !== "") {
-                const container = document.getElementById('skills-list');
-                const span = document.createElement('span');
-                span.className = 'skill-tag';
-                span.innerHTML =
-                    `${skill} <i class="fa-solid fa-xmark remove-skill" onclick="this.parentElement.remove()"></i>`;
-                container.appendChild(span);
+        function previewCoverImage(event) {
+            const reader = new FileReader();
+            reader.onload = function() {
+                const output = document.getElementById('profile-cover-preview');
+                output.style.backgroundImage = `url(${reader.result})`;
+            }
+            if (event.target.files[0]) {
+                reader.readAsDataURL(event.target.files[0]);
             }
         }
     </script>
