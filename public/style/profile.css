@@ -263,3 +263,28 @@
     font-size: 0.85rem;
     color: var(--text-muted);
 }
+
+.profile-edit-grid {
+    grid-template-columns: 1fr 1fr;
+}
+
+@media (max-width: 768px) {
+    .profile-edit-grid {
+        grid-template-columns: 1fr !important;
+    }
+    .profile-info-section {
+        padding: var(--space-lg);
+    }
+    .profile-avatar-wrapper {
+        width: 100px;
+        height: 100px;
+        margin-top: -50px;
+    }
+    .profile-name {
+        font-size: 1.5rem;
+    }
+    .profile-meta {
+        flex-direction: column;
+        gap: var(--space-sm);
+    }
+}

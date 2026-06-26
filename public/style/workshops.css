@@ -287,6 +287,12 @@
 }
 
 @media (max-width: 1200px) {
-  .featured-card { grid-template-columns: 1fr; }
-  .featured-img { min-height: 300px; }
+  .featured-card { flex-direction: column; }
+  .featured-img { min-height: 300px; width: 100%; flex: none; }
+  .featured-content { padding: 2rem; flex: none; }
+}
+
+@media (max-width: 768px) {
+  .featured-content h2 { font-size: 1.8rem; }
+  .featured-content { padding: 1.5rem; }
 }

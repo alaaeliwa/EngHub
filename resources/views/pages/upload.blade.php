@@ -20,7 +20,7 @@
         <main class="main-content">
             @include('components.topNav')
 
-            <div style="padding: var(--space-2xl); display: flex; flex-direction: column; align-items: center;">
+            <div class="dashboard-inner-content" style="display: flex; flex-direction: column; align-items: center; width: 100%;">
                 <div class="upload-container" style="width: 100%; max-width: 700px;">
                     <div class="upload-header" style="text-align: center; margin-bottom: 2rem;">
                         <h2
@@ -70,7 +70,7 @@
                                 <div class="grid-2" style="margin-bottom: 1.5rem; gap: 1rem;">
                                     <div class="input-group">
                                         <label>{{ __('messages.up_lbl_year') }}</label>
-                                        <div style="display: flex; gap: 5px;" id="year-btns">
+                                        <div style="display: flex; gap: 5px; flex-wrap: wrap;" id="year-btns">
                                             @foreach([1,2,3,4,5] as $yr)
                                             <button type="button" class="year-btn"
                                                 data-year="{{ $yr }}"
@@ -82,7 +82,7 @@
                                     </div>
                                     <div class="input-group">
                                         <label>{{ __('messages.up_lbl_sem') }}</label>
-                                        <div style="display: flex; gap: 5px;" id="sem-btns">
+                                        <div style="display: flex; gap: 5px; flex-wrap: wrap;" id="sem-btns">
                                             <button type="button" class="sem-btn"
                                                 data-sem="1"
                                                 style="flex: 1; padding: 0.6rem 0; background: white; border: 1px solid #cbd5e1; border-radius: var(--radius-sm); color: #64748b; font-size: 0.85rem; cursor: pointer; transition: all 0.2s;"

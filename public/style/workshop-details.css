@@ -348,10 +348,28 @@
 
 @media (max-width: 1024px) {
   .details-grid { grid-template-columns: 1fr; }
-  .workshop-header-info { flex-direction: column; text-align: center; gap: var(--space-xl); }
+  .workshop-header-info {
+    flex-direction: column;
+    align-items: flex-start;
+    text-align: left;
+    gap: var(--space-xl);
+    padding: 1.5rem 2rem;
+  }
+  .action-area { align-items: flex-start; width: 100%; }
+  .register-btn { width: 100%; justify-content: center; }
 }
 
 @media (max-width: 768px) {
   .topics-grid { grid-template-columns: 1fr; }
   .workshop-header-info h1 { font-size: 1.8rem; }
+  .workshop-banner { height: 220px; }
+  .workshop-header-info { padding: 1.25rem; }
+  .info-cards-row { grid-template-columns: 1fr 1fr; }
+  .details-block { padding: var(--space-lg); }
+}
+
+@media (max-width: 480px) {
+  .workshop-banner { height: 180px; }
+  .workshop-header-info h1 { font-size: 1.5rem; }
+  .info-cards-row { grid-template-columns: 1fr; }
 }

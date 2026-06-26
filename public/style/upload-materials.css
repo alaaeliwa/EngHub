@@ -329,4 +329,13 @@ input:checked + .slider:before {
   .grid-2 {
     grid-template-columns: 1fr;
   }
+  .card-body {
+    padding: var(--space-lg);
+  }
+  .card-header {
+    padding: var(--space-lg);
+  }
+  .drop-zone {
+    padding: 1.5rem 1rem;
+  }
 }

@@ -20,7 +20,7 @@
         <main class="main-content">
             @include('components.topNav')
 
-            <div style="padding: var(--space-2xl);">
+            <div class="dashboard-inner-content">
                 <div class="breadcrumb" style="margin-bottom: var(--space-xl);">
                     <a href="{{ route('courses') }}">{{ __('messages.crs_title') }}</a> <i class="fa-solid fa-chevron-{{ App::getLocale() == 'ar' ? 'left' : 'right' }}"></i> <span>{{ $course->title }}</span>
                 </div>
@@ -194,10 +194,10 @@
                                         </div>
                                     </div>
                                     <div class="col-actions">
-                                        <a href="{{ $material->file_path }}" class="btn btn-outline" target="_blank"
+                                        <a href="{{ $material->file_path ? asset('storage/' . $material->file_path) : '#' }}" class="btn btn-outline" target="_blank"
                                             style="padding: 6px 10px; border-radius: 50%; border-color: #cbd5e1; color: #64748b; text-decoration: none;"><i
                                                 class="fa-regular fa-eye"></i></a>
-                                        <a href="{{ $material->file_path }}" download class="btn btn-outline"
+                                        <a href="{{ $material->file_path ? asset('storage/' . $material->file_path) : '#' }}" download class="btn btn-outline"
                                             style="padding: 6px 10px; border-radius: 50%; border-color: #cbd5e1; color: #64748b; text-decoration: none;"><i
                                                 class="fa-solid fa-download"></i></a>
                                         <button class="btn btn-outline btn-like"

@@ -1077,26 +1077,89 @@ input:checked + .slider:before {
 
 @media (max-width: 768px) {
     .admin-welcome {
-        padding: 2rem;
+        padding: 1.5rem;
     }
     .admin-welcome h1 {
-        font-size: 1.8rem;
+        font-size: 1.6rem;
     }
     .welcome-flex {
         flex-direction: column;
         align-items: flex-start;
+        gap: 1rem;
+    }
+    .quick-actions {
+        flex-wrap: wrap;
+        width: 100%;
+    }
+    .btn-action-glass {
+        flex: 1;
+        justify-content: center;
+        font-size: 0.8rem;
+        padding: 0.65rem 1rem;
     }
     .admin-tabs {
         gap: 0;
     }
     .admin-tab {
-        padding: 0.75rem 1rem;
+        padding: 0.75rem 0.9rem;
         font-size: 0.8rem;
     }
-    .admin-tab span {
+    .admin-tab span:not(.tab-badge) {
         display: none;
     }
     .tab-badge {
         display: none;
+    }
+    /* Table horizontal scroll on mobile */
+    .data-table-wrap {
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+    }
+    .data-table {
+        min-width: 600px;
+    }
+    /* Header compact */
+    .header-top {
+        padding: 0.75rem 0;
+        gap: 0.75rem;
+    }
+    .admin-date {
+        display: none;
+    }
+    .admin-user .user-info {
+        display: none;
+    }
+    /* Panel header stack */
+    .panel-header {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+    .panel-actions {
+        width: 100%;
+        flex-wrap: wrap;
+    }
+    .search-wrap {
+        width: 100%;
+    }
+    /* Stats */
+    .stats-grid {
+        grid-template-columns: 1fr 1fr;
+        gap: var(--space-md);
+    }
+    .stat-card {
+        padding: 1.25rem;
+        gap: 1rem;
+    }
+    .stat-info h4 {
+        font-size: 1.4rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .stats-grid {
+        grid-template-columns: 1fr;
+    }
+    .admin-welcome h1 {
+        font-size: 1.3rem;
     }
 }

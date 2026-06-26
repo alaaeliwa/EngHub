@@ -20,7 +20,7 @@
         <main class="main-content">
             @include('components.topNav')
 
-            <div style="padding: var(--space-2xl);">
+            <div class="dashboard-inner-content">
 
                 <!-- Profile Header -->
                 <div class="profile-header-card">
@@ -72,8 +72,8 @@
                             <form method="POST" action="{{ route('profile.update') }}" id="profile-update-form"
                                 enctype="multipart/form-data">
                                 @csrf
-                                <div
-                                    style="display: grid; grid-template-columns: 1fr 1fr; gap: var(--space-md); margin-bottom: var(--space-md);">
+                                <div class="profile-edit-grid"
+                                    style="display: grid; gap: var(--space-md); margin-bottom: var(--space-md);">
                                     <div class="input-wrapper">
                                         <label
                                             style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 5px; display: block;">First

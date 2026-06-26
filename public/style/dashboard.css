@@ -12,6 +12,8 @@ body {
 .dashboard-layout {
     display: flex;
     min-height: 100vh;
+    width: 100%;
+    max-width: 100vw;
 }
 
 /* Sidebar Styles - Refined for a compact, professional look */
@@ -157,6 +159,7 @@ body {
     display: flex;
     flex-direction: column;
     min-width: 0;
+    max-width: 100%;
 }
 
 /* RTL Support - Arabic */
@@ -399,6 +402,8 @@ body {
     display: grid;
     grid-template-columns: 2fr 1fr;
     gap: var(--space-2xl);
+    max-width: 100%;
+    box-sizing: border-box;
 }
 
 .grid-column {
@@ -996,8 +1001,11 @@ body {
     }
 
     .main-content {
-        margin-left: 0;
+        margin-left: 0 !important;
+        margin-right: 0 !important;
         padding-right: 0;
+        width: 100vw;
+        max-width: 100vw;
     }
 
     .top-nav {
@@ -1013,6 +1021,15 @@ body {
 
     .dashboard-grid {
         grid-template-columns: 1fr;
+        gap: var(--space-md);
+        width: 100%;
+    }
+    /* Reorder: right column (quick actions) comes first on mobile */
+    .dashboard-col-right {
+        order: -1;
+    }
+    .dashboard-col-left {
+        order: 0;
     }
 }
 
@@ -1045,7 +1062,88 @@ body {
         display: none;
     }
 
+    .dashboard-inner-content {
+        padding: var(--space-sm) !important;
+    }
+    .welcome-widget {
+        padding: var(--space-md) !important;
+    }
+    .welcome-widget h1 {
+        font-size: 1.4rem !important;
+    }
+    .welcome-widget p {
+        font-size: 0.85rem !important;
+    }
+    .stats-grid {
+        grid-template-columns: 1fr 1fr !important;
+        gap: var(--space-sm) !important;
+    }
+    .card {
+        padding: var(--space-md) !important;
+    }
+    .top-nav {
+        padding: 0 var(--space-sm) !important;
+    }
+    .top-nav-left {
+        gap: var(--space-sm);
+    }
+    .top-nav-right {
+        gap: 4px !important;
+    }
     .search-bar {
-        max-width: 150px;
+        max-width: 120px;
+    }
+    .notification-dropdown {
+        width: calc(100vw - 2rem) !important;
+        max-width: 350px !important;
+        right: -1rem !important;
+    }
+    .content-tabs-section {
+        padding: var(--space-md) !important;
+    }
+}
+
+@media (max-width: 480px) {
+    .stats-grid {
+        grid-template-columns: 1fr !important;
+    }
+    .card {
+        width: 90%;
+    }
+    /* Quick actions: 2 columns on small screens */
+    .quick-actions-grid {
+        display: flex !important;
+        flex-direction: column;
+        gap: var(--space-sm);
+        flex-basis: 100% !important;
+    }
+    /* Course items: wrap text properly */
+    .dashboard-col-left .card h4 {
+        font-size: 0.95rem;
+    }
+}
+
+/* Dashboard Refactored Classes */
+.dashboard-inner-content {
+    padding: var(--space-2xl);
+    max-width: 100%;
+    box-sizing: border-box;
+}
+.welcome-widget {
+    padding: var(--space-2xl);
+    box-sizing: border-box;
+}
+.stats-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(min(200px, 100%), 1fr));
+    gap: var(--space-lg);
+    width: 100%;
+    box-sizing: border-box;
+}
+
+@media (max-width: 480px) {
+    .notification-dropdown {
+        width: 300px !important;
+        right: -80px !important;
     }
 }

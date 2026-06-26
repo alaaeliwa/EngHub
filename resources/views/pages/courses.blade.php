@@ -19,7 +19,7 @@
         <main class="main-content">
             @include('components.topNav')
 
-            <div style="padding: var(--space-2xl);">
+            <div class="dashboard-inner-content">
 
                 <!-- Page Header -->
                 <div class="page-header"
