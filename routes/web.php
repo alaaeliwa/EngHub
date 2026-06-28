@@ -56,6 +56,10 @@ Route::middleware(['auth'])->group(function () {
 
     // Material Ratings
     Route::post('/materials/{id}/rate', [\App\Http\Controllers\RatingController::class, 'rate'])->name('material.rate');
+
+    // Material Download and View
+    Route::get('/materials/{id}/download', [MainController::class, 'downloadMaterial'])->name('material.download');
+    Route::get('/materials/{id}/view', [MainController::class, 'viewMaterial'])->name('material.view');
 });
 
 // Admin Routes

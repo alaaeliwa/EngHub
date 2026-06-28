@@ -6,7 +6,7 @@
     <!-- Favicon -->
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta name="csrf-token" content="{{ csrf_token() }}">
-    <link rel="icon" href="../images/favicon.ico" />
+    <link rel="icon" href="/favicon.ico" />
     <!-- fontawesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
     <!-- Google Fonts -->
@@ -27,14 +27,14 @@
 
     <div class="dashboard-layout">
         <!-- Sidebar -->
-        @if(!request()->has('admin'))
+        @if (!request()->has('admin'))
             @include('components.sidbar')
         @endif
 
         <!-- Main Content Area -->
-        <main class="main-content" @if(request()->has('admin')) style="margin-left: 0;" @endif>
+        <main class="main-content" @if (request()->has('admin')) style="margin-left: 0;" @endif>
             <!-- Top Navbar -->
-            @if(!request()->has('admin'))
+            @if (!request()->has('admin'))
                 @include('components.topNav')
             @endif
             <div class="content-body">
@@ -57,12 +57,14 @@
                             </div>
                             <div class="card-body">
                                 <div class="input-group">
-                                    <label for="workshopTitle">{{ __('messages.wsc_title') }} <span class="required">*</span></label>
-                                    <input type="text" id="workshopTitle" placeholder="{{ __('messages.wsc_title_ph') }}"
-                                        required>
+                                    <label for="workshopTitle">{{ __('messages.wsc_title') }} <span
+                                            class="required">*</span></label>
+                                    <input type="text" id="workshopTitle"
+                                        placeholder="{{ __('messages.wsc_title_ph') }}" required>
                                 </div>
                                 <div class="input-group">
-                                    <label for="workshopCategory">{{ __('messages.wsc_category') }} <span class="required">*</span></label>
+                                    <label for="workshopCategory">{{ __('messages.wsc_category') }} <span
+                                            class="required">*</span></label>
                                     <select id="workshopCategory" required>
                                         <option value="">{{ __('messages.wsc_sel_category') }}</option>
                                         <option value="programming">{{ __('messages.ws_cat_prog') }}</option>
@@ -72,7 +74,8 @@
                                     </select>
                                 </div>
                                 <div class="input-group full-width">
-                                    <label for="workshopDescription">{{ __('messages.wsc_desc') }} <span class="required">*</span></label>
+                                    <label for="workshopDescription">{{ __('messages.wsc_desc') }} <span
+                                            class="required">*</span></label>
                                     <textarea id="workshopDescription" rows="4" placeholder="{{ __('messages.wsc_desc_ph') }}" required></textarea>
                                 </div>
                             </div>
@@ -90,11 +93,13 @@
                             <div class="card-body">
                                 <div class="form-row">
                                     <div class="input-group">
-                                        <label for="workshopDate">{{ __('messages.wsd_date') }} <span class="required">*</span></label>
+                                        <label for="workshopDate">{{ __('messages.wsd_date') }} <span
+                                                class="required">*</span></label>
                                         <input type="date" id="workshopDate" required>
                                     </div>
                                     <div class="input-group">
-                                        <label for="workshopTime">{{ __('messages.wsc_start_time') }} <span class="required">*</span></label>
+                                        <label for="workshopTime">{{ __('messages.wsc_start_time') }} <span
+                                                class="required">*</span></label>
                                         <input type="time" id="workshopTime" required>
                                     </div>
                                 </div>
@@ -111,7 +116,8 @@
                                     </div>
                                 </div>
                                 <div class="input-group">
-                                    <label for="workshopType">{{ __('messages.wsc_type') }} <span class="required">*</span></label>
+                                    <label for="workshopType">{{ __('messages.wsc_type') }} <span
+                                            class="required">*</span></label>
                                     <div class="radio-group">
                                         <label class="radio-label">
                                             <input type="radio" name="locationType" value="online" checked>
@@ -124,17 +130,21 @@
                                     </div>
                                 </div>
                                 <div class="input-group full-width" id="locationInputGroup">
-                                    <label for="workshopLocation" id="locationLabel">{{ __('messages.wsc_link') }} <span
-                                            class="required">*</span></label>
+                                    <label for="workshopLocation" id="locationLabel">{{ __('messages.wsc_link') }}
+                                        <span class="required">*</span></label>
                                     <input type="text" id="workshopLocation"
                                         placeholder="{{ __('messages.wsc_link_ph') }}" required>
                                 </div>
                                 <div class="input-group full-width">
-                                    <label style="display:block; font-weight:600; color:#374151; margin-bottom:4px; font-size:0.9rem;">{{ __('messages.wsc_departments') }}</label>
-                                    <div style="display:grid; grid-template-columns: 1fr 1fr; gap:0.5rem; max-height:120px; overflow-y:auto; border:1.5px solid #e2e8f0; border-radius:8px; padding:0.8rem;" id="workshopDepartments">
-                                        @foreach($departments as $dept)
-                                            <label style="display:flex; align-items:center; gap:0.5rem; font-size:0.85rem; color:#475569; cursor:pointer;">
-                                                <input type="checkbox" value="{{ $dept->id }}" class="ws_department_checkbox">
+                                    <label
+                                        style="display:block; font-weight:600; color:#374151; margin-bottom:4px; font-size:0.9rem;">{{ __('messages.wsc_departments') }}</label>
+                                    <div style="display:grid; grid-template-columns: 1fr 1fr; gap:0.5rem; max-height:120px; overflow-y:auto; border:1.5px solid #e2e8f0; border-radius:8px; padding:0.8rem;"
+                                        id="workshopDepartments">
+                                        @foreach ($departments as $dept)
+                                            <label
+                                                style="display:flex; align-items:center; gap:0.5rem; font-size:0.85rem; color:#475569; cursor:pointer;">
+                                                <input type="checkbox" value="{{ $dept->id }}"
+                                                    class="ws_department_checkbox">
                                                 {{ $dept->name }}
                                             </label>
                                         @endforeach
@@ -169,14 +179,21 @@
                                 </div>
                                 <div class="input-group full-width">
                                     <label>{{ __('messages.wsc_add_resources') }}</label>
-                                    <div class="resource-placeholders" style="display: flex; gap: 15px; flex-direction: column;">
-                                        <div class="res-item" style="display: flex; align-items: center; gap: 10px; cursor: pointer;" id="pdfUpload">
-                                            <i class="fa-solid fa-file-pdf"></i> <span id="pdfFileName">{{ __('messages.wsc_upload_pdf') }}</span>
+                                    <div class="resource-placeholders"
+                                        style="display: flex; gap: 15px; flex-direction: column;">
+                                        <div class="res-item"
+                                            style="display: flex; align-items: center; gap: 10px; cursor: pointer;"
+                                            id="pdfUpload">
+                                            <i class="fa-solid fa-file-pdf"></i> <span
+                                                id="pdfFileName">{{ __('messages.wsc_upload_pdf') }}</span>
                                             <input type="file" hidden accept=".pdf" id="pdfFile">
                                         </div>
-                                        <div class="res-item" style="display: flex; align-items: center; gap: 10px; background: rgba(255,255,255,0.5); padding: 10px; border-radius: 8px;">
+                                        <div class="res-item"
+                                            style="display: flex; align-items: center; gap: 10px; background: rgba(255,255,255,0.5); padding: 10px; border-radius: 8px;">
                                             <i class="fa-solid fa-link"></i>
-                                            <input type="text" id="usefulLinks" placeholder="{{ __('messages.wsc_paste_links') }}" style="border: none; background: transparent; outline: none; width: 100%; color: inherit; font-size: inherit; font-family: inherit;">
+                                            <input type="text" id="usefulLinks"
+                                                placeholder="{{ __('messages.wsc_paste_links') }}"
+                                                style="border: none; background: transparent; outline: none; width: 100%; color: inherit; font-size: inherit; font-family: inherit;">
                                         </div>
                                     </div>
                                 </div>
@@ -185,7 +202,8 @@
 
                         <!-- Submit Button Section -->
                         <div class="form-actions-bar animate-in">
-                            <button type="button" class="btn btn-outline" onclick="history.back()">{{ __('messages.cd_cancel') }}</button>
+                            <button type="button" class="btn btn-outline"
+                                onclick="history.back()">{{ __('messages.cd_cancel') }}</button>
                             <button type="submit" class="btn btn-primary btn-lg">
                                 <i class="fa-solid fa-plus-circle"></i> {{ __('messages.wsc_add_new') }}
                             </button>
@@ -194,7 +212,7 @@
                 </div>
             </div>
 
-            @if(!request()->has('admin'))
+            @if (!request()->has('admin'))
                 @include('components.footer')
             @endif
         </main>

@@ -405,5 +405,24 @@ return [
 
     // Flash Messages
     'auth_reset_link_sent' => 'تم إنشاء رابط إعادة التعيين بنجاح! انقر هنا لإعادة التعيين: ',
-    'auth_pass_reset_success' => 'تم إعادة تعيين كلمة المرور بنجاح! يمكنك الآن تسجيل الدخول.',
+    // Notifications & Toasts
+    'toast_success' => 'نجاح',
+    'toast_error' => 'خطأ',
+    'toast_info' => 'معلومة',
+    'toast_ws_created' => 'تم إنشاء الورشة بنجاح!',
+    'toast_ws_create_fail' => 'فشل في إنشاء الورشة',
+    'toast_ws_updated' => 'تم تحديث الورشة بنجاح!',
+    'toast_ws_update_fail' => 'فشل في تحديث الورشة',
+    'toast_error_occurred' => 'حدث خطأ ما',
+    'toast_link_copied' => 'تم نسخ الرابط بنجاح!',
+    'daily_welcome_title' => 'أهلاً بك مجدداً! 🚀',
+    'daily_welcome_message' => 'نتمنى لك يوماً دراسياً مليئاً بالإنجاز والنجاح في EngHub!',
+    'material_status_title' => 'تم :status المادة',
+    'material_status_message' => 'تم :status مادتك ":title" من قبل المسؤول.',
+    'approved' => 'قبول',
+    'rejected' => 'رفض',
+    'comment_reply_title' => 'رد جديد',
+    'comment_reply_message' => 'قام :name بالرد على تعليقك: ":comment"',
+    'comment_like_title' => 'إعجاب جديد',
+    'comment_like_message' => 'أعجب :name بتعليقك: ":comment"',
 ];

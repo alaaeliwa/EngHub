@@ -515,7 +515,7 @@
                                         <td>
                                             <div class="action-btns" id="material-actions-{{ $m->id }}">
                                                 <button class="action-btn view" title="Preview"
-                                                    onclick="window.open('{{ asset('storage/' . $m->file_path) }}', '_blank')"><i
+                                                    onclick="window.open('{{ route('material.view', $m->id) }}', '_blank')"><i
                                                         class="fa-solid fa-eye"></i></button>
                                                 @if ($m->status === 'pending')
                                                     <button class="action-btn approve" title="Approve"

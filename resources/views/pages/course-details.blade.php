@@ -194,11 +194,11 @@
                                         </div>
                                     </div>
                                     <div class="col-actions">
-                                        <a href="{{ $material->file_path ? asset('storage/' . $material->file_path) : '#' }}" class="btn btn-outline" target="_blank"
-                                            style="padding: 6px 10px; border-radius: 50%; border-color: #cbd5e1; color: #64748b; text-decoration: none;"><i
-                                                class="fa-regular fa-eye"></i></a>
-                                        <a href="{{ $material->file_path ? asset('storage/' . $material->file_path) : '#' }}" download class="btn btn-outline"
-                                            style="padding: 6px 10px; border-radius: 50%; border-color: #cbd5e1; color: #64748b; text-decoration: none;"><i
+                                        <a href="{{ $material->file_path ? route('material.view', $material->id) : '#' }}" class="btn btn-outline" target="_blank"
+                                            style="padding: 6px 10px; border-radius: 50%; border-color: #cbd5e1; color: #64748b; text-decoration: none;" title="View Material"><i
+                                                class="fa-solid fa-eye"></i></a>
+                                        <a href="{{ $material->file_path ? route('material.download', $material->id) : '#' }}" download class="btn btn-outline"
+                                            style="padding: 6px 10px; border-radius: 50%; border-color: #cbd5e1; color: #64748b; text-decoration: none;" title="Download Material"><i
                                                 class="fa-solid fa-download"></i></a>
                                         <button class="btn btn-outline btn-like"
                                             style="padding: 6px 10px; border-radius: 50%; border-color: {{ $isFavorited ? 'var(--primary)' : '#cbd5e1' }}; color: {{ $isFavorited ? 'var(--primary)' : '#64748b' }};"
@@ -770,11 +770,15 @@
                 }
             });
             const data = await res.json();
-            if (data.success) {
+            if (data.status === 'added' || data.status === 'removed') {
+                const isFavorited = data.status === 'added';
                 const icon = btn.querySelector('i');
-                icon.className = data.favorited ? 'fa-solid fa-heart' : 'fa-regular fa-heart';
-                btn.style.borderColor = data.favorited ? 'var(--primary)' : '#cbd5e1';
-                btn.style.color = data.favorited ? 'var(--primary)' : '#64748b';
+                icon.className = isFavorited ? 'fa-solid fa-heart' : 'fa-regular fa-heart';
+                btn.style.borderColor = isFavorited ? 'var(--primary)' : '#cbd5e1';
+                btn.style.color = isFavorited ? 'var(--primary)' : '#64748b';
+                if (typeof showToast !== 'undefined') {
+                    showToast(isFavorited ? 'Added to Favorites!' : 'Removed from Favorites', isFavorited ? 'success' : 'info');
+                }
             }
         }
 
@@ -886,7 +890,16 @@
                 }).catch(console.error);
             } else {
                 navigator.clipboard.writeText(url).then(() => {
-                    alert('Course link copied to clipboard!');
+                    if (typeof showToast === 'function') {
+                        showToast('✅ تم نسخ رابط الكورس!', 'success');
+                    } else {
+                        // inline mini toast
+                        const t = document.createElement('div');
+                        t.style.cssText = 'position:fixed;top:20px;right:20px;z-index:9999;background:#059669;color:#fff;padding:12px 20px;border-radius:8px;font-size:0.9rem;box-shadow:0 4px 15px rgba(0,0,0,0.2);';
+                        t.textContent = '✅ تم نسخ رابط الكورس!';
+                        document.body.appendChild(t);
+                        setTimeout(() => t.remove(), 3000);
+                    }
                 }).catch(err => {
                     console.error('Failed to copy: ', err);
                 });

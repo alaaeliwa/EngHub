@@ -137,7 +137,7 @@ class AdminController extends Controller
         $material->save();
 
         if ($material->user) {
-            $material->user->notify(new MaterialStatusNotification($material->title, $material->status));
+            $material->user->notify(new MaterialStatusNotification($material, $material->status));
         }
 
         return response()->json(['success' => true, 'status' => $material->status]);
@@ -147,7 +147,7 @@ class AdminController extends Controller
     {
         $material = Material::findOrFail($id);
         if ($material->user) {
-            $material->user->notify(new MaterialStatusNotification($material->title, 'deleted'));
+            $material->user->notify(new MaterialStatusNotification($material, 'deleted'));
         }
         $material->delete();
         return response()->json(['success' => true]);

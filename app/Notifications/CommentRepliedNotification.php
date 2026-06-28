@@ -26,11 +26,15 @@ class CommentRepliedNotification extends Notification
     public function toArray($notifiable)
     {
         return [
-            'title' => 'New Reply to Your Comment',
-            'message' => $this->reply->user->first_name . ' replied: "' . \Illuminate\Support\Str::limit($this->reply->body, 40) . '"',
+            'title' => __('messages.comment_reply_title'),
+            'message' => __('messages.comment_reply_message', [
+                'name' => $this->reply->user->first_name,
+                'comment' => \Illuminate\Support\Str::limit($this->reply->body, 40)
+            ]),
             'url' => route('course.details', ['id' => $this->courseId]) . '#comment-' . $this->reply->id,
             'icon' => 'fa-reply',
-            'color' => 'blue',
+            'color' => '#3b82f6',
+            'bg_color' => 'rgba(59,130,246,0.1)',
         ];
     }
 }

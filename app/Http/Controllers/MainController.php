@@ -60,6 +60,7 @@ class MainController extends Controller
         $course    = $courseId ? \App\Models\Course::with('departments')->find($courseId) : \App\Models\Course::first();
         $materials = $course
             ? $course->materials()
+                ->where('status', 'approved')
                 ->with('user')
                 ->withAvg('ratings', 'rating')
                 ->withCount('ratings')
@@ -167,6 +168,10 @@ class MainController extends Controller
     public function registerWorkshop($id){
         $workshop = \App\Models\Workshop::findOrFail($id);
 
+        if (auth()->user()->role === 'admin') {
+            return response()->json(['success' => false, 'message' => 'Admins cannot register for workshops.']);
+        }
+
         if (auth()->id() == $workshop->user_id) {
             return response()->json(['success' => false, 'message' => 'You cannot register for your own workshop.']);
         }
@@ -219,6 +224,36 @@ class MainController extends Controller
         return response()->json(['success' => false, 'message' => 'Registration not found.'], 404);
     }
 
+    public function downloadMaterial($id){
+        $material = \App\Models\Material::findOrFail($id);
+        
+        // Prevent downloading unapproved materials unless user is admin or uploader
+        if ($material->status !== 'approved' && auth()->user()->role !== 'admin' && auth()->id() !== $material->user_id) {
+            abort(403, 'This material is not available for download.');
+        }
+
+        if (!$material->file_path || !\Storage::disk('public')->exists($material->file_path)) {
+            abort(404, 'File not found.');
+        }
+
+        return response()->download(storage_path('app/public/' . $material->file_path), $material->title . '.' . pathinfo($material->file_path, PATHINFO_EXTENSION));
+    }
+
+    public function viewMaterial($id){
+        $material = \App\Models\Material::findOrFail($id);
+        
+        // Prevent viewing unapproved materials unless user is admin or uploader
+        if ($material->status !== 'approved' && auth()->user()->role !== 'admin' && auth()->id() !== $material->user_id) {
+            abort(403, 'This material is not available for viewing.');
+        }
+
+        if (!$material->file_path || !\Storage::disk('public')->exists($material->file_path)) {
+            abort(404, 'File not found.');
+        }
+
+        return response()->file(storage_path('app/public/' . $material->file_path));
+    }
+
     /**
      * Handle real material upload and notify all admins.
      */
@@ -259,7 +294,7 @@ class MainController extends Controller
     }
 
     public function storeWorkshop(Request $request){
-        $request->validate([
+        $validator = \Illuminate\Support\Facades\Validator::make($request->all(), [
             'title'           => 'required|string|max:255',
             'date'            => 'required|date',
             'location'        => 'required|string|max:255',
@@ -269,13 +304,20 @@ class MainController extends Controller
             'duration'        => 'nullable|integer',
             'type'            => 'nullable|string',
             'instructor_name' => 'nullable|string',
-            'capacity'        => 'nullable|integer',
-            'banner'          => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
+            'capacity'        => 'nullable|integer|min:1',
+            'banner'          => 'nullable|image|mimes:jpeg,png,jpg,gif,webp|max:5120',
             'pdf_slides'      => 'nullable|mimes:pdf|max:10240',
             'useful_links'    => 'nullable|string',
             'departments'     => 'nullable|array',
             'departments.*'   => 'exists:departments,id',
         ]);
+
+        if ($validator->fails()) {
+            return response()->json([
+                'success' => false,
+                'errors'  => $validator->errors(),
+            ], 422);
+        }
 
         $bannerPath = null;
         if ($request->hasFile('banner')) {

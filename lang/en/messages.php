@@ -405,5 +405,24 @@ return [
 
     // Flash Messages
     'auth_reset_link_sent' => 'Reset link generated successfully! Click here to reset: ',
-    'auth_pass_reset_success' => 'Password reset successfully! You can now log in.',
+    // Notifications & Toasts
+    'toast_success' => 'Success',
+    'toast_error' => 'Error',
+    'toast_info' => 'Info',
+    'toast_ws_created' => 'Workshop created successfully!',
+    'toast_ws_create_fail' => 'Failed to create workshop',
+    'toast_ws_updated' => 'Workshop updated successfully!',
+    'toast_ws_update_fail' => 'Failed to update workshop',
+    'toast_error_occurred' => 'An error occurred',
+    'toast_link_copied' => 'Link copied successfully!',
+    'daily_welcome_title' => 'Welcome Back! 🚀',
+    'daily_welcome_message' => 'Wishing you a productive and successful day at EngHub!',
+    'material_status_title' => 'Material :status',
+    'material_status_message' => 'Your material ":title" has been :status.',
+    'approved' => 'Approved',
+    'rejected' => 'Rejected',
+    'comment_reply_title' => 'New Reply',
+    'comment_reply_message' => ':name replied to your comment: ":comment"',
+    'comment_like_title' => 'New Like',
+    'comment_like_message' => ':name liked your comment: ":comment"',
 ];

@@ -116,10 +116,9 @@ document.addEventListener("DOMContentLoaded", () => {
                 const data = await response.json();
                 
                 if (data.success) {
+                if (data.success) {
                     if (typeof showToast !== 'undefined') {
-                        showToast("Workshop updated successfully!", "success");
-                    } else {
-                        alert("Workshop updated successfully!");
+                        showToast(window.translations?.toast_ws_updated || "Workshop updated successfully!", "success");
                     }
                     
                     setTimeout(() => {
@@ -127,9 +126,9 @@ document.addEventListener("DOMContentLoaded", () => {
                     }, 1500);
                 } else {
                     if (typeof showToast !== 'undefined') {
-                        showToast("Failed to update workshop", "error");
+                        showToast(window.translations?.toast_ws_update_fail || "Failed to update workshop", "error");
                     } else {
-                        alert("Failed to update workshop");
+                        console.error("Failed to update workshop", data);
                     }
                     submitBtn.innerHTML = originalText;
                     submitBtn.disabled = false;
@@ -137,9 +136,7 @@ document.addEventListener("DOMContentLoaded", () => {
             } catch (error) {
                 console.error("Error updating workshop:", error);
                 if (typeof showToast !== 'undefined') {
-                    showToast("An error occurred", "error");
-                } else {
-                    alert("An error occurred");
+                    showToast(window.translations?.toast_error_occurred || "An error occurred", "error");
                 }
                 submitBtn.innerHTML = originalText;
                 submitBtn.disabled = false;

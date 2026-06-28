@@ -69,6 +69,12 @@ class CommentController extends Controller
         } else {
             $comment->likedByUsers()->attach($userId);
             $comment->increment('likes');
+
+            // Notify comment author if it's not the liker themselves
+            if ($comment->user_id !== $userId && $comment->user) {
+                $likerName = auth()->user()->first_name . ' ' . auth()->user()->last_name;
+                $comment->user->notify(new \App\Notifications\CommentLikedNotification($comment, $likerName, $comment->course_id));
+            }
         }
 
         return response()->json([

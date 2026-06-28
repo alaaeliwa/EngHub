@@ -120,9 +120,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 
                 if (data.success) {
                     if (typeof showToast !== 'undefined') {
-                        showToast("Workshop created successfully!", "success");
-                    } else {
-                        alert("Workshop created successfully!");
+                        showToast(window.translations?.toast_ws_created || "Workshop created successfully!", "success");
                     }
                     
                     // Redirect back or to workshops page
@@ -135,9 +133,10 @@ document.addEventListener("DOMContentLoaded", () => {
                     }, 1500);
                 } else {
                     if (typeof showToast !== 'undefined') {
-                        showToast("Failed to create workshop", "error");
+                        showToast(window.translations?.toast_ws_create_fail || "Failed to create workshop", "error");
                     } else {
-                        alert("Failed to create workshop");
+                        // fallback if toast not available
+                        console.error("Failed to create workshop", data);
                     }
                     submitBtn.innerHTML = originalText;
                     submitBtn.disabled = false;
@@ -145,9 +144,7 @@ document.addEventListener("DOMContentLoaded", () => {
             } catch (error) {
                 console.error("Error creating workshop:", error);
                 if (typeof showToast !== 'undefined') {
-                    showToast("An error occurred", "error");
-                } else {
-                    alert("An error occurred");
+                    showToast(window.translations?.toast_error_occurred || "An error occurred", "error");
                 }
                 submitBtn.innerHTML = originalText;
                 submitBtn.disabled = false;

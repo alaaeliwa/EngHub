@@ -274,7 +274,7 @@ function renderMaterials(filter = {}) {
       <td><span class="badge badge-${m.status}">${capitalize(m.status)}</span></td>
       <td>
         <div class="action-btns">
-          <button class="action-btn view" title="Preview" onclick="window.open('/storage/' + '${m.file_path}', '_blank')"><i class="fa-solid fa-eye"></i></button>
+          <button class="action-btn view" title="Preview" onclick="window.open('/materials/' + ${m.id} + '/view', '_blank')"><i class="fa-solid fa-eye"></i></button>
           ${m.status === "pending" ? `<button class="action-btn approve" title="Approve" onclick="changeMaterialStatus(${m.id},'approved')"><i class="fa-solid fa-check"></i></button>` : ""}
           ${m.status === "pending" ? `<button class="action-btn ban" title="Reject" onclick="changeMaterialStatus(${m.id},'rejected')"><i class="fa-solid fa-xmark"></i></button>` : ""}
           <button class="action-btn delete" title="Delete" onclick="confirmDelete('material',${m.id})"><i class="fa-solid fa-trash"></i></button>
