@@ -29,7 +29,7 @@
                 @endif
             </button>
             
-            <div class="notification-dropdown" id="studentNotificationDropdown" onclick="event.stopPropagation()" style="display: none; position: absolute; top: 100%; right: 0; background: white; width: 350px; border: 1px solid #e2e8f0; border-radius: 8px; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1); margin-top: 8px; z-index: 50;">
+            <div class="notification-dropdown" id="studentNotificationDropdown" onclick="event.stopPropagation()" style="position: absolute; top: 100%; right: 0; background: white; width: 350px; border: 1px solid #e2e8f0; border-radius: 8px; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1); margin-top: 8px; z-index: 50;">
                 <div class="dropdown-header" style="padding: 10px 15px; border-bottom: 1px solid #e2e8f0; display: flex; justify-content: space-between; align-items: center;">
                     <h4 style="margin: 0; font-size: 1rem;">Notifications</h4>
                     <div style="display: flex; gap: 10px;">
@@ -62,6 +62,24 @@
                 </div>
             </div>
         </div>
+        <script>
+            function toggleStudentDropdown(e) {
+                if(e) e.stopPropagation();
+                var dropdown = document.getElementById('studentNotificationDropdown');
+                if (dropdown) {
+                    dropdown.classList.toggle('active');
+                }
+            }
+            document.addEventListener('click', function(e) {
+                var dropdown = document.getElementById('studentNotificationDropdown');
+                var btn = document.getElementById('studentNotificationBtn');
+                if (dropdown && dropdown.classList.contains('active')) {
+                    if (!dropdown.contains(e.target) && (!btn || !btn.contains(e.target))) {
+                        dropdown.classList.remove('active');
+                    }
+                }
+            });
+        </script>
     </div>
 </header>
 
@@ -127,28 +145,7 @@
             }
         });
 
-        // Student Notification Dropdown Handlers
-        window.toggleStudentDropdown = function(e) {
-            e.stopPropagation();
-            const studentNotificationDropdown = document.getElementById('studentNotificationDropdown');
-            if (studentNotificationDropdown) {
-                if (studentNotificationDropdown.style.display === 'none') {
-                    studentNotificationDropdown.style.display = 'block';
-                } else {
-                    studentNotificationDropdown.style.display = 'none';
-                }
-            }
-        };
 
-        document.addEventListener('click', function(e) {
-            const studentNotificationBtn = document.getElementById('studentNotificationBtn');
-            const studentNotificationDropdown = document.getElementById('studentNotificationDropdown');
-            if (studentNotificationDropdown && studentNotificationDropdown.style.display === 'block') {
-                if (!studentNotificationDropdown.contains(e.target) && (!studentNotificationBtn || !studentNotificationBtn.contains(e.target))) {
-                    studentNotificationDropdown.style.display = 'none';
-                }
-            }
-        });
 
         // Mobile Sidebar Toggle
         const mobileMenuBtn = document.getElementById('mobileMenuBtn');

@@ -19,6 +19,11 @@ class DailyWelcome
     {
         if (Auth::check()) {
             $user = Auth::user();
+
+            if ($user->role === 'admin') {
+                return $next($request);
+            }
+
             $today = now()->toDateString();
 
             if (Session::get('welcomed_date') !== $today) {
